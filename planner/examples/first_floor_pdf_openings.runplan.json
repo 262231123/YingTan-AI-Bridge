@@ -1,0 +1,124 @@
+{
+  "operations": [
+    {
+      "id": "pdf-door-001",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339713,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 27500, "yMm": 0, "zMm": 0 }
+      }
+    },
+    {
+      "id": "pdf-door-002",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339724,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 25000, "yMm": 6700, "zMm": 0 }
+      }
+    },
+    {
+      "id": "pdf-door-003",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339722,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 28250, "yMm": 4200, "zMm": 0 }
+      }
+    },
+    {
+      "id": "pdf-door-004",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339725,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 25000, "yMm": 11500, "zMm": 0 }
+      }
+    },
+    {
+      "id": "pdf-window-001",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339717,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": 23500, "yMm": 15100, "zMm": 900 }
+      }
+    },
+    {
+      "id": "pdf-window-002",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339717,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": 27000, "yMm": 15100, "zMm": 900 }
+      }
+    },
+    {
+      "id": "pdf-window-003",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339717,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": 30500, "yMm": 15100, "zMm": 900 }
+      }
+    },
+    {
+      "id": "pdf-window-004",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339714,
+        "familyName": "固定",
+        "typeName": "1000 x 1200mm",
+        "location": { "xMm": 35700, "yMm": 8300, "zMm": 900 }
+      }
+    },
+    {
+      "id": "pdf-window-005",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339713,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": 31500, "yMm": 0, "zMm": 900 }
+      }
+    },
+    {
+      "id": "pdf-window-006",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339713,
+        "familyName": "固定",
+        "typeName": "1000 x 1200mm",
+        "location": { "xMm": 34000, "yMm": 0, "zMm": 900 }
+      }
+    }
+  ]
+}

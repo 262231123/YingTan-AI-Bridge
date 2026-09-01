@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>YingTanInventorAiBridge</AssemblyName>
+    <RootNamespace>YingTanAiBridge.Inventor</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <EnableInventorSdk Condition="'$(EnableInventorSdk)' == ''">false</EnableInventorSdk>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableInventorSdk)' == 'true'">
+    <DefineConstants>$(DefineConstants);INVENTOR_SDK</DefineConstants>
+    <InventorInstallDir Condition="'$(InventorInstallDir)' == ''">$([System.Environment]::GetEnvironmentVariable('INVENTOR_INSTALL_DIR'))</InventorInstallDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YingTanAiBridge.Contracts\YingTanAiBridge.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(EnableInventorSdk)' == 'true'">
+    <Reference Include="Autodesk.Inventor.Interop"><HintPath>$(InventorInstallDir)\Bin\Public Assemblies\Autodesk.Inventor.Interop.dll</HintPath><EmbedInteropTypes>false</EmbedInteropTypes><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,318 @@
+{
+  "project": "two-story villa 150sqm first floor openings",
+  "units": "millimeters",
+  "operations": [
+    {
+      "id": "villa-door-main-entry",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339683,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 2500, "yMm": -6000, "zMm": 0 }
+      }
+    },
+    {
+      "id": "villa-door-rear-garden",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339685,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 4000, "yMm": 6000, "zMm": 0 }
+      }
+    },
+    {
+      "id": "villa-door-f1-guest",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339687,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": -1800, "yMm": -4200, "zMm": 0 }
+      }
+    },
+    {
+      "id": "villa-door-f1-bath",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339687,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": -1800, "yMm": -500, "zMm": 0 }
+      }
+    },
+    {
+      "id": "villa-door-f1-kitchen",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339687,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": -1800, "yMm": 3500, "zMm": 0 }
+      }
+    },
+    {
+      "id": "villa-door-f1-stair-core",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339690,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 2200, "yMm": 2500, "zMm": 0 }
+      }
+    },
+    {
+      "id": "villa-door-f2-master",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339696,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 0, "yMm": -3000, "zMm": 4000 }
+      }
+    },
+    {
+      "id": "villa-door-f2-north-suite",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339696,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 0, "yMm": 3000, "zMm": 4000 }
+      }
+    },
+    {
+      "id": "villa-door-f2-bath",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339698,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": { "xMm": 2600, "yMm": 1300, "zMm": 4000 }
+      }
+    },
+    {
+      "id": "villa-window-f1-south-guest",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339683,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": -4200, "yMm": -6000, "zMm": 1000 }
+      }
+    },
+    {
+      "id": "villa-window-f1-south-living",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339683,
+        "familyName": "固定",
+        "typeName": "1500 x 1500mm",
+        "location": { "xMm": 4300, "yMm": -6000, "zMm": 1000 }
+      }
+    },
+    {
+      "id": "villa-window-f1-east-living",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339684,
+        "familyName": "固定",
+        "typeName": "1500 x 1500mm",
+        "location": { "xMm": 6250, "yMm": -3000, "zMm": 1000 }
+      }
+    },
+    {
+      "id": "villa-window-f1-east-dining",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339684,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": 6250, "yMm": 2200, "zMm": 1000 }
+      }
+    },
+    {
+      "id": "villa-window-f1-north-kitchen",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339685,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": -4200, "yMm": 6000, "zMm": 1000 }
+      }
+    },
+    {
+      "id": "villa-window-f1-north-family",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339685,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": 1200, "yMm": 6000, "zMm": 1000 }
+      }
+    },
+    {
+      "id": "villa-window-f1-west-guest",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339686,
+        "familyName": "固定",
+        "typeName": "1000 x 1200mm",
+        "location": { "xMm": -6250, "yMm": -4000, "zMm": 1100 }
+      }
+    },
+    {
+      "id": "villa-window-f1-west-bath",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339686,
+        "familyName": "固定",
+        "typeName": "1000 x 1200mm",
+        "location": { "xMm": -6250, "yMm": -500, "zMm": 1300 }
+      }
+    },
+    {
+      "id": "villa-window-f1-west-kitchen",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339686,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": -6250, "yMm": 3500, "zMm": 1000 }
+      }
+    },
+    {
+      "id": "villa-window-f2-south-master",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339692,
+        "familyName": "固定",
+        "typeName": "1500 x 1500mm",
+        "location": { "xMm": -3000, "yMm": -5000, "zMm": 4900 }
+      }
+    },
+    {
+      "id": "villa-window-f2-south-bedroom",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339692,
+        "familyName": "固定",
+        "typeName": "1500 x 1500mm",
+        "location": { "xMm": 3000, "yMm": -5000, "zMm": 4900 }
+      }
+    },
+    {
+      "id": "villa-window-f2-east-bedroom",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339693,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": 5250, "yMm": -2500, "zMm": 4900 }
+      }
+    },
+    {
+      "id": "villa-window-f2-east-bath",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339693,
+        "familyName": "固定",
+        "typeName": "1000 x 1200mm",
+        "location": { "xMm": 5250, "yMm": 3500, "zMm": 5200 }
+      }
+    },
+    {
+      "id": "villa-window-f2-north-suite",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339694,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": -3900, "yMm": 5000, "zMm": 4900 }
+      }
+    },
+    {
+      "id": "villa-window-f2-north-hall",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339694,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": 1300, "yMm": 5000, "zMm": 4900 }
+      }
+    },
+    {
+      "id": "villa-window-f2-west-master",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339695,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": -5250, "yMm": -2500, "zMm": 4900 }
+      }
+    },
+    {
+      "id": "villa-window-f2-west-suite",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "hostElementId": 339695,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": { "xMm": -5250, "yMm": 2500, "zMm": 4900 }
+      }
+    }
+  ]
+}

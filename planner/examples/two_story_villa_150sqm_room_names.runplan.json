@@ -1,0 +1,29 @@
+{
+  "project": "two-story villa 150sqm first floor room names",
+  "operations": [
+    { "id": "room-101-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339732, "parameterName": "名称", "value": "客餐厅" } },
+    { "id": "room-101-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339732, "parameterName": "编号", "value": "101" } },
+    { "id": "room-102-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339734, "parameterName": "名称", "value": "客房" } },
+    { "id": "room-102-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339734, "parameterName": "编号", "value": "102" } },
+    { "id": "room-103-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339735, "parameterName": "名称", "value": "公卫" } },
+    { "id": "room-103-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339735, "parameterName": "编号", "value": "103" } },
+    { "id": "room-104-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339736, "parameterName": "名称", "value": "厨房" } },
+    { "id": "room-104-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339736, "parameterName": "编号", "value": "104" } },
+    { "id": "room-105-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339737, "parameterName": "名称", "value": "家政储藏" } },
+    { "id": "room-105-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339737, "parameterName": "编号", "value": "105" } },
+    { "id": "room-201-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339738, "parameterName": "名称", "value": "主卧" } },
+    { "id": "room-201-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339738, "parameterName": "编号", "value": "201" } },
+    { "id": "room-202-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339740, "parameterName": "名称", "value": "次卧" } },
+    { "id": "room-202-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339740, "parameterName": "编号", "value": "202" } },
+    { "id": "room-203-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339741, "parameterName": "名称", "value": "北侧套房" } },
+    { "id": "room-203-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339741, "parameterName": "编号", "value": "203" } },
+    { "id": "room-204-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339742, "parameterName": "名称", "value": "二层走廊" } },
+    { "id": "room-204-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339742, "parameterName": "编号", "value": "204" } },
+    { "id": "room-205-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339743, "parameterName": "名称", "value": "起居厅" } },
+    { "id": "room-205-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339743, "parameterName": "编号", "value": "205" } },
+    { "id": "room-206-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339744, "parameterName": "名称", "value": "二层公卫" } },
+    { "id": "room-206-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339744, "parameterName": "编号", "value": "206" } },
+    { "id": "room-207-name", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339745, "parameterName": "名称", "value": "书房" } },
+    { "id": "room-207-number", "command": "set_parameter", "dryRun": false, "payload": { "elementId": 339745, "parameterName": "编号", "value": "207" } }
+  ]
+}

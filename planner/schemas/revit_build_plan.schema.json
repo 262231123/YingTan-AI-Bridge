@@ -1,0 +1,365 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Revit Build Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "intentSummary",
+    "sourceAnalysis",
+    "target",
+    "safety",
+    "assumptions",
+    "operations"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "intentSummary": {
+      "type": "string"
+    },
+    "sourceAnalysis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "inputTypes",
+        "detectedScale",
+        "confidence",
+        "notes"
+      ],
+      "properties": {
+        "inputTypes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "text",
+              "image",
+              "pdf",
+              "cad",
+              "unknown"
+            ]
+          }
+        },
+        "detectedScale": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "revitVersion",
+        "units",
+        "coordinateOrigin"
+      ],
+      "properties": {
+        "revitVersion": {
+          "type": "string"
+        },
+        "units": {
+          "type": "string",
+          "enum": [
+            "mm"
+          ]
+        },
+        "coordinateOrigin": {
+          "type": "string"
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dryRunRequired",
+        "needsUserConfirmation",
+        "riskLevel",
+        "warnings"
+      ],
+      "properties": {
+        "dryRunRequired": {
+          "type": "boolean"
+        },
+        "needsUserConfirmation": {
+          "type": "boolean"
+        },
+        "riskLevel": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "operations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/operation"
+      }
+    }
+  },
+  "$defs": {
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "xMm",
+        "yMm",
+        "zMm"
+      ],
+      "properties": {
+        "xMm": {
+          "type": "number"
+        },
+        "yMm": {
+          "type": "number"
+        },
+        "zMm": {
+          "type": "number"
+        }
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "command",
+        "description",
+        "dryRun",
+        "payload",
+        "confidence",
+        "requires"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "command": {
+          "type": "string",
+          "enum": [
+            "get_active_document",
+            "list_levels",
+            "list_wall_types",
+            "list_family_symbols",
+            "count_elements",
+            "create_wall",
+            "set_parameter",
+            "place_door",
+            "place_window",
+            "create_room",
+            "create_level",
+            "create_floor",
+            "unsupported"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "dryRun": {
+          "type": "boolean"
+        },
+        "payload": {
+          "$ref": "#/$defs/payload"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "requires": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "payload": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "elementId",
+        "parameterName",
+        "value",
+        "doubleUnit",
+        "levelName",
+        "levelId",
+        "wallTypeName",
+        "wallTypeId",
+        "start",
+        "end",
+        "heightMm",
+        "familyName",
+        "typeName",
+        "hostElementId",
+        "location",
+        "widthMm",
+        "notes"
+      ],
+      "properties": {
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "elementId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "parameterName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        },
+        "doubleUnit": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "mm",
+            "feet",
+            null
+          ]
+        },
+        "levelName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "levelId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "wallTypeName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "wallTypeId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "start": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/point"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "end": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/point"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "heightMm": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "familyName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "typeName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "hostElementId": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "location": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/point"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "widthMm": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

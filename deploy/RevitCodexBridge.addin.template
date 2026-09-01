@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>&#30408;&#30899; Revit AI Bridge</Name>
+    <Assembly>{{ASSEMBLY_PATH}}</Assembly>
+    <AddInId>0C4422D8-70F0-47D4-BA63-29E9C1E3A811</AddInId>
+    <FullClassName>RevitCodexBridge.Addin.BridgeApplication</FullClassName>
+    <VendorId>CODX</VendorId>
+    <VendorDescription>YingTan Revit AI Bridge, dockable conversational Revit AI assistant.</VendorDescription>
+  </AddIn>
+  <AddIn Type="Command">
+    <Name>&#30408;&#30899; Revit AI Bridge</Name>
+    <Text>&#30408;&#30899; Revit AI Bridge</Text>
+    <Assembly>{{ASSEMBLY_PATH}}</Assembly>
+    <AddInId>F7E8F05D-9777-4B82-8711-87DDB5D47F5F</AddInId>
+    <FullClassName>RevitCodexBridge.Addin.BridgeCommand</FullClassName>
+    <VisibilityMode>AlwaysVisible</VisibilityMode>
+    <Discipline>Any</Discipline>
+    <VendorId>CODX</VendorId>
+    <VendorDescription>Opens the YingTan Revit AI Bridge dockable chat assistant.</VendorDescription>
+  </AddIn>
+</RevitAddIns>

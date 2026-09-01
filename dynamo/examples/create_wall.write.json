@@ -1,0 +1,15 @@
+{
+  "command": "create_wall",
+  "levelName": "Level 1",
+  "start": {
+    "xMm": 0,
+    "yMm": 0
+  },
+  "end": {
+    "xMm": 5000,
+    "yMm": 0
+  },
+  "heightMm": 3000,
+  "dryRun": false
+}
+

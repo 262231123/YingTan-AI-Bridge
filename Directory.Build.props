@@ -1,0 +1,22 @@
+<Project>
+  <PropertyGroup>
+    <RevitVersion>2027</RevitVersion>
+    <BridgePort>7878</BridgePort>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RevitInstallDir)' == ''">
+    <RevitInstallDir>$([System.Environment]::GetEnvironmentVariable('REVIT_$(RevitVersion)_DIR'))</RevitInstallDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RevitInstallDir)' == '' and Exists('C:\Program Files\Autodesk\Revit $(RevitVersion)\RevitAPI.dll')">
+    <RevitInstallDir>C:\Program Files\Autodesk\Revit $(RevitVersion)</RevitInstallDir>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(RevitInstallDir)' == '' and Exists('D:\Program Files\Autodesk\Revit $(RevitVersion)\RevitAPI.dll')">
+    <RevitInstallDir>D:\Program Files\Autodesk\Revit $(RevitVersion)</RevitInstallDir>
+  </PropertyGroup>
+</Project>

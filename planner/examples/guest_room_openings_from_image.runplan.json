@@ -1,0 +1,68 @@
+{
+  "operations": [
+    {
+      "id": "opn-001",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339680,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": {
+          "xMm": 0,
+          "yMm": 2600,
+          "zMm": 0
+        }
+      }
+    },
+    {
+      "id": "opn-002",
+      "command": "place_door",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339683,
+        "familyName": "单扇 - 与墙齐",
+        "typeName": "750 x 2000mm",
+        "location": {
+          "xMm": 3800,
+          "yMm": 2200,
+          "zMm": 0
+        }
+      }
+    },
+    {
+      "id": "opn-003",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339681,
+        "familyName": "固定",
+        "typeName": "1000 x 1200mm",
+        "location": {
+          "xMm": 10850,
+          "yMm": 900,
+          "zMm": 900
+        }
+      }
+    },
+    {
+      "id": "opn-004",
+      "command": "place_window",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "hostElementId": 339681,
+        "familyName": "固定",
+        "typeName": "1200 x 1500mm",
+        "location": {
+          "xMm": 10850,
+          "yMm": 2400,
+          "zMm": 900
+        }
+      }
+    }
+  ]
+}

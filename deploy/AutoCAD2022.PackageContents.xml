@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage
+  SchemaVersion="1.0"
+  AutodeskProduct="AutoCAD"
+  Name="盈碳 AutoCAD AI Bridge"
+  Description="面向 AutoCAD 的可配置 AI 对话、模型查询与受控自动化助手"
+  AppVersion="1.0.0"
+  ProductCode="{C26C7711-4B14-4F72-A469-B14CC32FC283}">
+  <CompanyDetails
+    Name="盈碳科技"
+    Url="https://ytszkj.net"
+    Email="scott.xyc@foxmail.com" />
+  <Components>
+    <RuntimeRequirements
+      OS="Win64"
+      Platform="AutoCAD*"
+      SeriesMin="R24.1"
+      SeriesMax="R24.1" />
+    <ComponentEntry
+      AppName="盈碳 AutoCAD AI Bridge"
+      ModuleName="./Contents/Windows/YingTanAutoCadAiBridge.dll"
+      AppDescription="盈碳 AutoCAD AI Bridge"
+      LoadOnAutoCADStartup="True">
+      <Commands GroupName="YINGTAN_AI_BRIDGE">
+        <Command Global="YINGTANAIBRIDGE" Local="YINGTANAIBRIDGE" />
+      </Commands>
+    </ComponentEntry>
+  </Components>
+</ApplicationPackage>

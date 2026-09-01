@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  portable-components:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Build CLI
+        run: dotnet build src/RevitCodexBridge.Cli/RevitCodexBridge.Cli.csproj --configuration Release
+      - name: Build MCP server
+        run: dotnet build src/RevitCodexBridge.Mcp/RevitCodexBridge.Mcp.csproj --configuration Release
+      - name: Build shared contracts
+        run: dotnet build src/YingTanAiBridge.Contracts/YingTanAiBridge.Contracts.csproj --configuration Release
+      - name: Validate planner example
+        run: python planner/revit_ai_planner.py validate --plan planner/examples/simple_room.buildplan.json
+
+# Autodesk and Rhino SDK assemblies are proprietary and are not available on
+# GitHub-hosted runners. Host plug-ins are built locally with the corresponding
+# application installed; see docs/release-guide.md.

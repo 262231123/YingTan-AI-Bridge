@@ -1,0 +1,39 @@
+{
+  "schemaVersion": "1.0",
+  "catalog": "YingTan Skill Hub - starter catalog",
+  "skills": [
+    {
+      "id": "net.ytszkj.revit.quantity-audit",
+      "displayName": "Revit 数量与明细表核对",
+      "version": "1.0.0",
+      "category": "核对",
+      "publisher": {
+        "id": "net.ytszkj",
+        "name": "盈碳建筑科技",
+        "trustLevel": "verified-publisher"
+      },
+      "hosts": [
+        {
+          "id": "revit",
+          "hostVersions": ["2020", "2021", "2022", "2023", "2024", "2025", "2026", "2027"],
+          "minimumBridgeVersion": "1.0.0"
+        }
+      ],
+      "triggers": {
+        "keywords": ["明细表", "数量", "统计", "核对", "墙体数量", "差异"],
+        "negativeKeywords": ["精装", "软装"]
+      },
+      "commandProfiles": [
+        {
+          "host": "revit",
+          "recommendedCommands": ["analyze_walls", "count_elements", "list_schedules"],
+          "risk": "read"
+        }
+      ],
+      "requiresConfirmation": false,
+      "testMatrix": [
+        { "host": "revit", "hostVersion": "2027", "bridgeVersion": "1.0.0", "status": "passed" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "project": "Energy Cube construction drawings",
+  "units": "millimeters",
+  "operations": [
+    {
+      "id": "energy-cube-construction-drawings",
+      "command": "create_drawing_set",
+      "dryRun": false,
+      "payload": {
+        "levelNames": ["标高 1", "标高 2", "标高 3", "屋顶"],
+        "minXmm": -20000,
+        "maxXmm": 20000,
+        "minYmm": -30000,
+        "maxYmm": 30000,
+        "topMm": 24000,
+        "gridPaddingMm": 1500,
+        "dimensionOffsetMm": 1200,
+        "overallDimensionOffsetMm": 2200,
+        "elevationPaddingMm": 2500,
+        "elevationOffsetMm": 3500,
+        "roomElevationPaddingMm": 800,
+        "secondFloorHeightMm": 4000,
+        "planScale": 200,
+        "elevationScale": 200,
+        "roomElevationScale": 50,
+        "verticalAxes": [
+          { "name": "1", "xMm": -18000 },
+          { "name": "2", "xMm": -7000 },
+          { "name": "3", "xMm": 0 },
+          { "name": "4", "xMm": 7000 },
+          { "name": "5", "xMm": 12000 },
+          { "name": "6", "xMm": 18000 }
+        ],
+        "horizontalAxes": [
+          { "name": "A", "yMm": -20000 },
+          { "name": "B", "yMm": -14000 },
+          { "name": "C", "yMm": -5000 },
+          { "name": "D", "yMm": 0 },
+          { "name": "E", "yMm": 9000 },
+          { "name": "F", "yMm": 14000 },
+          { "name": "G", "yMm": 20000 }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>YingTanAutoCadAiBridge</AssemblyName>
+    <RootNamespace>YingTanAiBridge.AutoCad</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AutoCadInstallDir Condition="'$(AutoCadInstallDir)' == '' and Exists('D:\Program Files\Autodesk\AutoCAD 2022\AcMgd.dll')">D:\Program Files\Autodesk\AutoCAD 2022</AutoCadInstallDir>
+    <AutoCadInstallDir Condition="'$(AutoCadInstallDir)' == '' and Exists('C:\Program Files\Autodesk\AutoCAD 2022\AcMgd.dll')">C:\Program Files\Autodesk\AutoCAD 2022</AutoCadInstallDir>
+    <EnableAutoCadSdk Condition="'$(EnableAutoCadSdk)' == '' and '$(AutoCadInstallDir)' != ''">true</EnableAutoCadSdk>
+    <EnableAutoCadSdk Condition="'$(EnableAutoCadSdk)' == ''">false</EnableAutoCadSdk>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableAutoCadSdk)' == 'true'">
+    <DefineConstants>$(DefineConstants);AUTOCAD_SDK</DefineConstants>
+    <AutoCadInstallDir Condition="'$(AutoCadInstallDir)' == ''">$([System.Environment]::GetEnvironmentVariable('AUTOCAD_INSTALL_DIR'))</AutoCadInstallDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YingTanAiBridge.Contracts\YingTanAiBridge.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(EnableAutoCadSdk)' == 'true'">
+    <Reference Include="AcMgd"><HintPath>$(AutoCadInstallDir)\AcMgd.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="AcDbMgd"><HintPath>$(AutoCadInstallDir)\AcDbMgd.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="AcCoreMgd"><HintPath>$(AutoCadInstallDir)\AcCoreMgd.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

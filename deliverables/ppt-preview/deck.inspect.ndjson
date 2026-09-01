@@ -1,0 +1,133 @@
+{"kind":"deck","id":"pr/z96jyf","name":"Deck"}
+{"kind":"layout","layoutId":"795eb3c0-e1fd-4d79-b7f5-c50fe1db997d","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"57c5c945-8846-4033-af03-fa5728482323","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/yh5cgn","slide":1,"title":"盈碳 AI","textShapes":3}
+{"kind":"textbox","id":"sh/2lsbelgv","slide":1,"name":"Title-3-1","text":"盈碳 AI\n工程助手","textPreview":"盈碳 AI | 工程助手","textChars":10,"textLines":2,"bbox":[41.33,182.55,610,275]}
+{"kind":"textbox","id":"sh/p8ja90f6","slide":1,"name":"Subtitle-4-2","text":"让自然语言成为 Revit、AutoCAD 与 Rhino 的受控操作入口","textPreview":"让自然语言成为 Revit、AutoCAD 与 Rhino 的受控操作入口","textChars":37,"textLines":1,"bbox":[41.33,497.87,570,113.41]}
+{"kind":"textbox","id":"sh/onatgvy1","slide":1,"name":"Subtitle-4-3","text":"YINGTAN TECHNOLOGY / PRODUCT DECK","textPreview":"YINGTAN TECHNOLOGY / PRODUCT DECK","textChars":33,"textLines":1,"bbox":[41.33,41.18,598.67,68.15]}
+{"kind":"shape","id":"sh/a9sbilwr","slide":1,"bbox":[682,0,18,720]}
+{"kind":"image","id":"im/2d8by9s3","slide":1,"name":"","alt":"盈碳 AI 工程助手建筑信息模型概念视觉","bbox":[700,0,580,720]}
+{"kind":"notes","id":"nt/yh5cgn","slide":1,"text":"开场先明确产品定位：它不是通用聊天机器人，而是工程软件里的 AI 执行桥。\n\n[Sources]\n- Source: local product repository; conceptual visual generated for this deck and labeled as such in the companion article.\n[/Sources]"}
+{"kind":"slide","id":"sl/2r2zu9","slide":2,"title":"02","textShapes":6}
+{"kind":"textbox","id":"sh/knexonux","slide":2,"name":"Google-Shape-532-p58-2","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"textbox","id":"sh/z25gvitc","slide":2,"name":"Google-Shape-533-p58-3","text":"工程软件很强，但“意图到执行”仍有三道断点","textPreview":"工程软件很强，但“意图到执行”仍有三道断点","textChars":21,"textLines":1,"bbox":[41.33,36.17,1197.33,134.7]}
+{"kind":"shape","id":"sh/y1cfmdcr","slide":2,"name":"Rounded-Rectangle-9-4","bbox":[452.38,353.33,374.67,276]}
+{"kind":"shape","id":"sh/x03ytsb6","slide":2,"name":"Rounded-Rectangle-10-5","bbox":[864,353.33,374.67,276]}
+{"kind":"textbox","id":"sh/czuxknul","slide":2,"name":"Content-Placeholder-9-6","text":"AI 与宿主\n大模型能解释，但不能绕过 Revit/CAD/Rhino 的执行上下文。","textPreview":"AI 与宿主 | 大模型能解释，但不能绕过 Revit/CAD/Rhino 的执行上下文。","textChars":43,"textLines":2,"bbox":[485.23,435.29,309.64,150.43]}
+{"kind":"textbox","id":"sh/bylgrit0","slide":2,"name":"Content-Placeholder-10-7","text":"自动化与治理\n写入需要预演、确认、日志与回滚，而不只是生成代码。","textPreview":"自动化与治理 | 写入需要预演、确认、日志与回滚，而不只是生成代码。","textChars":32,"textLines":2,"bbox":[896.18,435.29,309.64,150.43]}
+{"kind":"shape","id":"sh/axcfidcv","slide":2,"name":"Google-Shape-340-p61-8","bbox":[485.84,387.83,24.55,24.54]}
+{"kind":"shape","id":"sh/hw7y5cbq","slide":2,"name":"Google-Shape-340-p61-9","bbox":[895.88,387.83,24.55,24.54]}
+{"kind":"shape","id":"sh/wvyhw7u5","slide":2,"name":"Rounded-Rectangle-5-10","bbox":[40.77,353.33,374.67,276]}
+{"kind":"textbox","id":"sh/y9kna5sr","slide":2,"name":"Content-Placeholder-9-11","text":"意图与命令\n自然语言难以直接映射到专业对象和精确参数。","textPreview":"意图与命令 | 自然语言难以直接映射到专业对象和精确参数。","textChars":27,"textLines":2,"bbox":[73.61,435.29,309.64,150.43]}
+{"kind":"shape","id":"sh/zut43atc","slide":2,"name":"Google-Shape-340-p61-12","bbox":[74.23,387.83,24.55,24.54]}
+{"kind":"textbox","id":"sh/kv25cvah","slide":2,"name":"Content-Placeholder-15-13","text":"现实\n工程师说目标\n软件需要对象、参数、坐标与事务。","textPreview":"现实 | 工程师说目标 | 软件需要对象、参数、坐标与事务。","textChars":26,"textLines":3,"bbox":[41.33,152.29,1197.33,171.05]}
+{"kind":"shape","id":"sh/lwbm50r2","slide":2,"name":"accent-2","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/a5k36lsf","slide":2,"name":"brand-chip-2","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/2r2zu9","slide":2,"text":"把客户熟悉的重复操作痛点，转化为三个产品必须解决的系统断点。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/docs/yingtan-ai-bridge-product-line.md\n[/Sources]"}
+{"kind":"slide","id":"sl/bdmdeh","slide":3,"title":"不是只回答","textShapes":3}
+{"kind":"textbox","id":"sh/0bypsbmx","slide":3,"name":"Title-3-1","text":"不是只回答\n而是把意图变成工程动作","textPreview":"不是只回答 | 而是把意图变成工程动作","textChars":17,"textLines":2,"bbox":[41.33,270.86,992,380.5]}
+{"kind":"textbox","id":"sh/zapoj65c","slide":3,"name":"Subtitle-4-2","text":"产品定位","textPreview":"产品定位","textChars":4,"textLines":1,"bbox":[41.33,41.18,646.49,68.15]}
+{"kind":"textbox","id":"sh/y9g7q14r","slide":3,"name":"Subtitle-4-3","text":"YINGTAN AI BRIDGE","textPreview":"YINGTAN AI BRIDGE","textChars":17,"textLines":1,"bbox":[828,41.18,410.67,68.15]}
+{"kind":"shape","id":"sh/do76hwn6","slide":3,"bbox":[828,650,410,9]}
+{"kind":"shape","id":"sh/cnypor6l","slide":3,"name":"accent-3","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/bmpof650","slide":3,"name":"brand-chip-3","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/bdmdeh","slide":3,"text":"这一页只讲一句话：AI 负责理解和规划，宿主 API 负责真实执行。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/README.md\n[/Sources]"}
+{"kind":"slide","id":"sl/ohf4bo","slide":4,"title":"04","textShapes":8}
+{"kind":"textbox","id":"sh/83exsjit","slide":4,"name":"Slide-Number-Placeholder-3-2","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"textbox","id":"sh/7i5wzeh8","slide":4,"name":"Title-10-3","text":"从一句话到一次可审查的工程操作","textPreview":"从一句话到一次可审查的工程操作","textChars":15,"textLines":1,"bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/mhwfq90n","slide":4,"name":"Google-Shape-2259-p159-4","bbox":[35.46,354.2,1285.61,0.03]}
+{"kind":"shape","id":"sh/h8ne5oza","slide":4,"name":"Google-Shape-2260-p159-5","bbox":[35.46,348.58,11.24,11.24]}
+{"kind":"shape","id":"sh/w7exw3ip","slide":4,"name":"Google-Shape-2261-p159-6","bbox":[446.38,348.58,11.24,11.24]}
+{"kind":"shape","id":"sh/v65w3yh4","slide":4,"name":"Google-Shape-2262-p159-7","bbox":[858.38,348.58,11.24,11.24]}
+{"kind":"textbox","id":"sh/u5wfut0j","slide":4,"name":"Content-Placeholder-15-8","text":"01  理解","textPreview":"01  理解","textChars":6,"textLines":1,"bbox":[41.33,298.51,169.33,27.55]}
+{"kind":"textbox","id":"sh/xc3et4j6","slide":4,"name":"Content-Placeholder-15-9","text":"02  规划","textPreview":"02  规划","textChars":6,"textLines":1,"bbox":[450.83,298.51,169.33,27.55]}
+{"kind":"textbox","id":"sh/cbudkzil","slide":4,"name":"Content-Placeholder-15-10","text":"03  执行","textPreview":"03  执行","textChars":6,"textLines":1,"bbox":[863.33,298.51,169.33,27.55]}
+{"kind":"textbox","id":"sh/yt832d4b","slide":4,"name":"Text-Placeholder-16-11","text":"模型 + Agent + Skill\n生成受约束的结构化命令，并完成参数校验。","textPreview":"模型 + Agent + Skill | 生成受约束的结构化命令，并完成参数校验。","textChars":39,"textLines":2,"bbox":[453.24,401.33,331.35,166.54]}
+{"kind":"textbox","id":"sh/zuh4bi5g","slide":4,"name":"Text-Placeholder-16-12","text":"意图 + 上下文\n读取当前文档、选择集、元素或对象信息。","textPreview":"意图 + 上下文 | 读取当前文档、选择集、元素或对象信息。","textChars":28,"textLines":2,"bbox":[41.98,401.33,331.35,166.54]}
+{"kind":"textbox","id":"sh/kvql4nm1","slide":4,"name":"Text-Placeholder-16-13","text":"预演 + 确认 + API\n查询直接运行；写操作确认后进入宿主事务。","textPreview":"预演 + 确认 + API | 查询直接运行；写操作确认后进入宿主事务。","textChars":34,"textLines":2,"bbox":[858.57,401.33,331.35,166.54]}
+{"kind":"shape","id":"sh/lwzmdsnm","slide":4,"name":"accent-4","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/mx836x47","slide":4,"name":"brand-chip-4","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/ohf4bo","slide":4,"text":"强调每个阶段都有可读、可审查的中间产物。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/docs/usage-guide.md; E:/CodeXwork/AI接入REVIT/docs/ai-automation-scripts.md\n[/Sources]"}
+{"kind":"slide","id":"sl/4emb6u","slide":5,"title":"05","textShapes":3}
+{"kind":"textbox","id":"sh/9cja9sfe","slide":5,"name":"Google-Shape-532-p58-2","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"textbox","id":"sh/m9sbydgn","slide":5,"name":"Google-Shape-533-p58-3","text":"盈碳 Revit AI Bridge","textPreview":"盈碳 Revit AI Bridge","textChars":18,"textLines":1,"bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/na1s7ix8","slide":5,"name":"Picture-3-4-backing","bbox":[658.17,41.62,581.6,588.14]}
+{"kind":"textbox","id":"sh/x03adsfa","slide":5,"name":"Google-Shape-534-p58-5","text":"对话与模型执行同屏\n右侧停靠式 AI 助手保留独立会话和历史，消息可选择复制。读取当前模型上下文，支持元素统计、参数与构件操作；写入前先展示计划并等待确认。","textPreview":"对话与模型执行同屏 | 右侧停靠式 AI 助手保留独立会话和历史，消息可选择复制。读取当前模型上下文，支持元素统计、参数与构件操作；写入前先展示计划并等待确认。","textChars":78,"textLines":2,"bbox":[41.33,213.33,581.33,416]}
+{"kind":"shape","id":"sh/adcb2xwz","slide":5,"name":"accent-5","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/belsb2x4","slide":5,"name":"brand-chip-5","bbox":[1098,36,140,5]}
+{"kind":"image","id":"im/hcr2lcvy","slide":5,"name":"Picture-3-4","geometry":"roundRect","alt":"建筑 BIM 三层信息模型概念视觉","bbox":[658.17,41.62,581.6,588.14]}
+{"kind":"notes","id":"nt/4emb6u","slide":5,"text":"用 Revit 端说明产品的完整交互：聊天、上下文、计划、确认和结果解释。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/src/RevitCodexBridge.Addin/ChatDockPane.xaml; conceptual visual generated for this deck.\n[/Sources]"}
+{"kind":"slide","id":"sl/tco7p9","slide":6,"title":"06","textShapes":5}
+{"kind":"textbox","id":"sh/ilk7u9o7","slide":6,"name":"Google-Shape-532-p58-2","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"textbox","id":"sh/5ovqpo7y","slide":6,"name":"Google-Shape-533-p58-3","text":"同一套 AI 配置，适配不同工程宿主","textPreview":"同一套 AI 配置，适配不同工程宿主","textChars":18,"textLines":1,"bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"textbox","id":"sh/4n29wj6d","slide":6,"name":"Google-Shape-534-p58-4","text":"Revit AI Bridge\nRevit 2027 主开发宿主\n元素、参数、事务与模型自动化","textPreview":"Revit AI Bridge | Revit 2027 主开发宿主 | 元素、参数、事务与模型自动化","textChars":47,"textLines":3,"bbox":[41.33,353.33,374.67,276]}
+{"kind":"textbox","id":"sh/rad8ryp4","slide":6,"name":"Content-Placeholder-1-5","text":"Rhino AI Bridge\nRhino 8 原生 Eto 窗口\n文档对象、图层与受控几何","textPreview":"Rhino AI Bridge | Rhino 8 原生 Eto 窗口 | 文档对象、图层与受控几何","textChars":46,"textLines":3,"bbox":[864,353.33,374.67,276]}
+{"kind":"textbox","id":"sh/qp4rytoj","slide":6,"name":"Content-Placeholder-2-6","text":"AutoCAD AI Bridge\nAutoCAD 2022 右侧 Palette\nDWG、图层、选择集与受控绘图","textPreview":"AutoCAD AI Bridge | AutoCAD 2022 右侧 Palette | DWG、图层、选择集与受控绘图","textChars":57,"textLines":3,"bbox":[452.67,353.33,374.67,276]}
+{"kind":"shape","id":"sh/dcvqto7u","slide":6,"name":"accent-6","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/cbm90j69","slide":6,"name":"brand-chip-6","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/tco7p9","slide":6,"text":"三端共享配置和安全约定，但对象映射与执行器各自独立。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/docs/yingtan-ai-bridge-product-line.md\n[/Sources]"}
+{"kind":"slide","id":"sl/i9zjds","slide":7,"title":"07","textShapes":6}
+{"kind":"textbox","id":"sh/36x8vidg","slide":7,"name":"Slide-Number-Placeholder-1-2","text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1184.17,659.17,54.5,25.33]}
+{"kind":"textbox","id":"sh/4769onu1","slide":7,"name":"Title-2-3","text":"Agent 与 Skill：把个人经验变成团队可复用能力","textPreview":"Agent 与 Skill：把个人经验变成团队可复用能力","textChars":28,"textLines":1,"bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"textbox","id":"sh/58fqx8vm","slide":7,"name":"Content-Placeholder-9-4","text":"Agent 定义角色\n规定目标、策略、边界和输出口径。","textPreview":"Agent 定义角色 | 规定目标、策略、边界和输出口径。","textChars":27,"textLines":2,"bbox":[41.33,213.33,581.33,172.5]}
+{"kind":"textbox","id":"sh/u14ritcz","slide":7,"name":"Content-Placeholder-10-5","text":"Skill 封装流程\n把命名、检查、建模和出图规则版本化。","textPreview":"Skill 封装流程 | 把命名、检查、建模和出图规则版本化。","textChars":29,"textLines":2,"bbox":[656.86,213.33,581.33,172.5]}
+{"kind":"textbox","id":"sh/v2x8rydk","slide":7,"name":"Content-Placeholder-9-6","text":"结构化计划\n能力扩展不绕过宿主适配器和命令验证。","textPreview":"结构化计划 | 能力扩展不绕过宿主适配器和命令验证。","textChars":24,"textLines":2,"bbox":[41.33,421.73,581.33,172.51]}
+{"kind":"textbox","id":"sh/w369k3u5","slide":7,"name":"Content-Placeholder-10-7","text":"既有插件编排\n精装等专业插件仅在明确意图下作为 Skill 调用。","textPreview":"既有插件编排 | 精装等专业插件仅在明确意图下作为 Skill 调用。","textChars":33,"textLines":2,"bbox":[656.86,421.73,581.33,172.51]}
+{"kind":"shape","id":"sh/h4fqt8vq","slide":7,"name":"accent-7","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/md47etc3","slide":7,"name":"brand-chip-7","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/i9zjds","slide":7,"text":"Agent 负责如何思考，Skill 负责如何按团队规则完成一类任务。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/docs/ai-automation-scripts.md\n[/Sources]"}
+{"kind":"slide","id":"sl/tt6xfy","slide":8,"title":"08","textShapes":6}
+{"kind":"textbox","id":"sh/bitojeto","slide":8,"name":"Slide-Number-Placeholder-1-2","text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1184.17,659.17,54.5,25.33]}
+{"kind":"textbox","id":"sh/cj25cjut","slide":8,"name":"Title-2-3","text":"工程自动化需要的，不只是聪明，更是边界","textPreview":"工程自动化需要的，不只是聪明，更是边界","textChars":19,"textLines":1,"bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"textbox","id":"sh/xkb6lobe","slide":8,"name":"Content-Placeholder-9-4","text":"宿主 API\n插件在宿主进程内调用官方对象模型。","textPreview":"宿主 API | 插件在宿主进程内调用官方对象模型。","textChars":24,"textLines":2,"bbox":[41.33,213.33,581.33,172.5]}
+{"kind":"textbox","id":"sh/2d0n69cr","slide":8,"name":"Content-Placeholder-10-5","text":"Dry-run\n创建、修改、删除先展示影响范围。","textPreview":"Dry-run | 创建、修改、删除先展示影响范围。","textChars":24,"textLines":2,"bbox":[656.86,213.33,581.33,172.5]}
+{"kind":"textbox","id":"sh/ne9ofutc","slide":8,"name":"Content-Placeholder-9-6","text":"显式确认\n用户确认后才进入事务或数据库写入。","textPreview":"显式确认 | 用户确认后才进入事务或数据库写入。","textChars":22,"textLines":2,"bbox":[41.33,421.73,581.33,172.51]}
+{"kind":"textbox","id":"sh/ofi58zux","slide":8,"name":"Content-Placeholder-10-7","text":"日志与回滚\n记录计划和结果，批量执行可按策略回滚。","textPreview":"日志与回滚 | 记录计划和结果，批量执行可按策略回滚。","textChars":25,"textLines":2,"bbox":[656.86,421.73,581.33,172.51]}
+{"kind":"shape","id":"sh/pgb6h4bi","slide":8,"name":"accent-8","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/6947itcb","slide":8,"name":"brand-chip-8","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/tt6xfy","slide":8,"text":"安全不是一句免责声明，而是被固化为默认执行路径。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/docs/usage-guide.md\n[/Sources]"}
+{"kind":"slide","id":"sl/h21qqj","slide":9,"title":"09","textShapes":5}
+{"kind":"textbox","id":"sh/f694nqxg","slide":9,"name":"Google-Shape-532-p58-2","text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"textbox","id":"sh/g7i5gve1","slide":9,"name":"Google-Shape-533-p58-3","text":"模型服务可配置，团队知识可持续扩展","textPreview":"模型服务可配置，团队知识可持续扩展","textChars":17,"textLines":1,"bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"textbox","id":"sh/18rmp0fm","slide":9,"name":"Google-Shape-534-p58-4","text":"多模型提供商\nOpenAI、智谱、Kimi、火山方舟/豆包等可按项目配置。","textPreview":"多模型提供商 | OpenAI、智谱、Kimi、火山方舟/豆包等可按项目配置。","textChars":37,"textLines":2,"bbox":[41.33,353.33,374.67,276]}
+{"kind":"textbox","id":"sh/2t0ni5w7","slide":9,"name":"Content-Placeholder-1-5","text":"本地密钥保护\nAPI Key 使用 Windows DPAPI 加密，保存前自动备份配置。","textPreview":"本地密钥保护 | API Key 使用 Windows DPAPI 加密，保存前自动备份配置。","textChars":45,"textLines":2,"bbox":[864,353.33,374.67,276]}
+{"kind":"textbox","id":"sh/3u94raxs","slide":9,"name":"Content-Placeholder-2-6","text":"跨宿主共享\nRevit、AutoCAD 与 Rhino 读取同一份模型、Agent 和 Skill 配置。","textPreview":"跨宿主共享 | Revit、AutoCAD 与 Rhino 读取同一份模型、Agent 和 Skill 配置。","textChars":53,"textLines":2,"bbox":[452.67,353.33,374.67,276]}
+{"kind":"shape","id":"sh/ovi5kvex","slide":9,"name":"accent-9","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/pwrmt0fi","slide":9,"name":"brand-chip-9","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/h21qqj","slide":9,"text":"说明产品不绑定单一模型服务，配置和团队能力可以随项目演进。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/docs/yingtan-ai-bridge-product-line.md\n[/Sources]"}
+{"kind":"slide","id":"sl/6231tp","slide":10,"title":"10","textShapes":6}
+{"kind":"textbox","id":"sh/2x0v2x0r","slide":10,"name":"Slide-Number-Placeholder-1-2","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1184.17,659.17,54.5,25.33]}
+{"kind":"textbox","id":"sh/p0buxsji","slide":10,"name":"Title-2-3","text":"先从规则清晰、结果可验证的场景开始","textPreview":"先从规则清晰、结果可验证的场景开始","textChars":17,"textLines":1,"bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"textbox","id":"sh/ozid4nix","slide":10,"name":"Content-Placeholder-9-4","text":"模型查询\n统计对象、元素或选择集，并解释统计口径。","textPreview":"模型查询 | 统计对象、元素或选择集，并解释统计口径。","textChars":25,"textLines":2,"bbox":[41.33,213.33,581.33,172.5]}
+{"kind":"textbox","id":"sh/fu9cri1g","slide":10,"name":"Content-Placeholder-10-5","text":"参数与构件\n创建构件、修改参数，写入前预演。","textPreview":"参数与构件 | 创建构件、修改参数，写入前预演。","textChars":22,"textLines":2,"bbox":[656.86,213.33,581.33,172.5]}
+{"kind":"textbox","id":"sh/et0vyd0v","slide":10,"name":"Content-Placeholder-9-6","text":"CAD / Rhino 整理\n图层、基础几何和对象信息的受控操作。","textPreview":"CAD / Rhino 整理 | 图层、基础几何和对象信息的受控操作。","textChars":33,"textLines":2,"bbox":[41.33,421.73,581.33,172.51]}
+{"kind":"textbox","id":"sh/1wrutsjm","slide":10,"name":"Content-Placeholder-10-7","text":"企业标准\n把检查表、命名和专业流程封装为 Skill。","textPreview":"企业标准 | 把检查表、命名和专业流程封装为 Skill。","textChars":27,"textLines":2,"bbox":[656.86,421.73,581.33,172.51]}
+{"kind":"shape","id":"sh/0vid0ni1","slide":10,"name":"accent-10","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/r6pcny14","slide":10,"name":"brand-chip-10","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/6231tp","slide":10,"text":"不承诺未经验证的效率比例，用任务是否可验证来决定落地顺序。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/docs/usage-guide.md; E:/CodeXwork/AI接入REVIT/src/YingTanAiBridge.AutoCAD/README.md; E:/CodeXwork/AI接入REVIT/src/YingTanAiBridge.Rhino/README.md\n[/Sources]"}
+{"kind":"slide","id":"sl/cfb90k","slide":11,"title":"11","textShapes":8}
+{"kind":"textbox","id":"sh/lgrap8nu","slide":11,"name":"Slide-Number-Placeholder-3-2","text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1184.18,659.24,54.48,25.33]}
+{"kind":"textbox","id":"sh/yd0redo3","slide":11,"name":"Title-10-3","text":"建议用三步，把 AI 工程助手带进真实项目","textPreview":"建议用三步，把 AI 工程助手带进真实项目","textChars":21,"textLines":1,"bbox":[41.33,36.12,1197.33,109.97]}
+{"kind":"shape","id":"sh/ze9sni5o","slide":11,"name":"Google-Shape-2259-p159-4","bbox":[35.46,354.2,1285.61,0.03]}
+{"kind":"shape","id":"sh/8j2tkn65","slide":11,"name":"Google-Shape-2260-p159-5","bbox":[35.46,348.58,11.24,11.24]}
+{"kind":"shape","id":"sh/9kbatsnq","slide":11,"name":"Google-Shape-2261-p159-6","bbox":[446.38,348.58,11.24,11.24]}
+{"kind":"shape","id":"sh/mhkbidoz","slide":11,"name":"Google-Shape-2262-p159-7","bbox":[858.38,348.58,11.24,11.24]}
+{"kind":"textbox","id":"sh/7itsri5k","slide":11,"name":"Content-Placeholder-15-8","text":"阶段 1","textPreview":"阶段 1","textChars":4,"textLines":1,"bbox":[41.33,298.51,169.33,27.55]}
+{"kind":"textbox","id":"sh/w72to76h","slide":11,"name":"Content-Placeholder-15-9","text":"阶段 2","textPreview":"阶段 2","textChars":4,"textLines":1,"bbox":[450.83,298.51,169.33,27.55]}
+{"kind":"textbox","id":"sh/h8baxsnm","slide":11,"name":"Content-Placeholder-15-10","text":"阶段 3","textPreview":"阶段 3","textChars":4,"textLines":1,"bbox":[863.33,298.51,169.33,27.55]}
+{"kind":"textbox","id":"sh/h0zy5kr6","slide":11,"name":"Text-Placeholder-16-11","text":"固化高频流程\n选 1—2 个场景，做成 Agent 或 Skill。","textPreview":"固化高频流程 | 选 1—2 个场景，做成 Agent 或 Skill。","textChars":34,"textLines":2,"bbox":[453.24,401.33,331.35,166.54]}
+{"kind":"textbox","id":"sh/gzqhcfa1","slide":11,"name":"Text-Placeholder-16-12","text":"验证连接\n测试模型、查询命令、模型服务与日志。","textPreview":"验证连接 | 测试模型、查询命令、模型服务与日志。","textChars":23,"textLines":2,"bbox":[41.98,401.33,331.35,166.54]}
+{"kind":"textbox","id":"sh/fyhg3a9g","slide":11,"name":"Text-Placeholder-16-13","text":"建立回归与治理\n白名单、事务、备份和真实项目样例。","textPreview":"建立回归与治理 | 白名单、事务、备份和真实项目样例。","textChars":25,"textLines":2,"bbox":[858.57,401.33,331.35,166.54]}
+{"kind":"shape","id":"sh/ux8zapsv","slide":11,"name":"accent-11","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/pojy94ri","slide":11,"name":"brand-chip-11","bbox":[1098,36,140,5]}
+{"kind":"notes","id":"nt/cfb90k","slide":11,"text":"现场状态如实说明：AutoCAD 2022 已部署但仍需完成运行回归，Inventor 暂为适配入口。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT/docs/yingtan-ai-bridge-product-line.md\n[/Sources]"}
+{"kind":"slide","id":"sl/ck6byj","slide":12,"title":"让工程软件","textShapes":3}
+{"kind":"textbox","id":"sh/98nadsbi","slide":12,"name":"Title-3-1","text":"让工程软件\n真正听懂意图","textPreview":"让工程软件 | 真正听懂意图","textChars":12,"textLines":2,"bbox":[41.33,182.55,992,261.57]}
+{"kind":"textbox","id":"sh/mlwbidcr","slide":12,"name":"Subtitle-4-2","text":"ytszkj.net\nscott.xyc@foxmail.com\n产品试用 · 场景共创 · 企业 Skill 定制","textPreview":"ytszkj.net | scott.xyc@foxmail.com | 产品试用 · 场景共创 · 企业 Skill 定制","textChars":58,"textLines":3,"bbox":[41.33,522.13,374.67,113.41]}
+{"kind":"textbox","id":"sh/nm5sbitc","slide":12,"name":"Subtitle-4-3","text":"盈碳科技","textPreview":"盈碳科技","textChars":4,"textLines":1,"bbox":[41.33,41.18,169.33,68.15]}
+{"kind":"shape","id":"sh/wbytonat","slide":12,"bbox":[864,182,374,453]}
+{"kind":"shape","id":"sh/u9wbmds3","slide":12,"bbox":[894,212,314,9]}
+{"kind":"shape","id":"sh/vapsfit8","slide":12,"name":"accent-12","bbox":[0,0,7,720]}
+{"kind":"shape","id":"sh/cfu9c3up","slide":12,"name":"brand-chip-12","bbox":[1098,36,140,5]}
+{"kind":"image","id":"im/kzehwbyd","slide":12,"name":"","geometry":"rect","alt":"盈碳 AI 工程助手建筑模型概念视觉","bbox":[864,182,374,453]}
+{"kind":"notes","id":"nt/ck6byj","slide":12,"text":"收束到合作入口：产品试用、典型场景共创和企业 Skill 定制。\n\n[Sources]\n- Source: E:/CodeXwork/AI接入REVIT; contact details supplied by product owner.\n[/Sources]"}

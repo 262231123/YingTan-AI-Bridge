@@ -1,0 +1,268 @@
+{
+  "operations": [
+    {
+      "id": "pdf-001",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": { "xMm": 20000, "yMm": 0, "zMm": 0 },
+        "end": { "xMm": 35700, "yMm": 0, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-002",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": { "xMm": 35700, "yMm": 0, "zMm": 0 },
+        "end": { "xMm": 35700, "yMm": 11100, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-003",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": { "xMm": 35700, "yMm": 11100, "zMm": 0 },
+        "end": { "xMm": 31600, "yMm": 11100, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-004",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": { "xMm": 31600, "yMm": 11100, "zMm": 0 },
+        "end": { "xMm": 31600, "yMm": 15100, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-005",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": { "xMm": 31600, "yMm": 15100, "zMm": 0 },
+        "end": { "xMm": 21600, "yMm": 15100, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-006",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": { "xMm": 21600, "yMm": 15100, "zMm": 0 },
+        "end": { "xMm": 21600, "yMm": 11500, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-007",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": { "xMm": 21600, "yMm": 11500, "zMm": 0 },
+        "end": { "xMm": 20000, "yMm": 11500, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-008",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": { "xMm": 20000, "yMm": 11500, "zMm": 0 },
+        "end": { "xMm": 20000, "yMm": 0, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-009",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 23900, "yMm": 0, "zMm": 0 },
+        "end": { "xMm": 23900, "yMm": 11500, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-010",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 28250, "yMm": 0, "zMm": 0 },
+        "end": { "xMm": 28250, "yMm": 15100, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-011",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 31600, "yMm": 0, "zMm": 0 },
+        "end": { "xMm": 31600, "yMm": 11100, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-012",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 20000, "yMm": 6700, "zMm": 0 },
+        "end": { "xMm": 35700, "yMm": 6700, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-013",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 20000, "yMm": 11500, "zMm": 0 },
+        "end": { "xMm": 31600, "yMm": 11500, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-014",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 28250, "yMm": 11100, "zMm": 0 },
+        "end": { "xMm": 35700, "yMm": 11100, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-015",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 26000, "yMm": 6700, "zMm": 0 },
+        "end": { "xMm": 26000, "yMm": 11500, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-016",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 23900, "yMm": 8500, "zMm": 0 },
+        "end": { "xMm": 28250, "yMm": 8500, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-017",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 26000, "yMm": 0, "zMm": 0 },
+        "end": { "xMm": 26000, "yMm": 6700, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-018",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 29850, "yMm": 0, "zMm": 0 },
+        "end": { "xMm": 29850, "yMm": 6700, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-019",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 28250, "yMm": 3000, "zMm": 0 },
+        "end": { "xMm": 31600, "yMm": 3000, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-020",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 28250, "yMm": 5000, "zMm": 0 },
+        "end": { "xMm": 31600, "yMm": 5000, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-021",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 32800, "yMm": 0, "zMm": 0 },
+        "end": { "xMm": 32800, "yMm": 6700, "zMm": 0 },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "pdf-022",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 31600, "yMm": 3000, "zMm": 0 },
+        "end": { "xMm": 35700, "yMm": 3000, "zMm": 0 },
+        "heightMm": 3000
+      }
+    }
+  ]
+}

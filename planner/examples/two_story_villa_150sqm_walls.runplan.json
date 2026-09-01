@@ -1,0 +1,227 @@
+{
+  "project": "two-story villa 150sqm first floor",
+  "units": "millimeters",
+  "notes": [
+    "First floor footprint is centered on the project origin: 12500 x 12000 mm = 150 sqm.",
+    "Second floor is recessed to 10500 x 10000 mm for a terrace-like massing.",
+    "Level 1 walls rise to Level 2 at 4000 mm; Level 2 walls are 3200 mm high."
+  ],
+  "operations": [
+    {
+      "id": "villa-f1-ext-south",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "外部 - 带砖与金属立筋龙骨复合墙",
+        "start": { "xMm": -6250, "yMm": -6000 },
+        "end": { "xMm": 6250, "yMm": -6000 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f1-ext-east",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "外部 - 带砖与金属立筋龙骨复合墙",
+        "start": { "xMm": 6250, "yMm": -6000 },
+        "end": { "xMm": 6250, "yMm": 6000 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f1-ext-north",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "外部 - 带砖与金属立筋龙骨复合墙",
+        "start": { "xMm": 6250, "yMm": 6000 },
+        "end": { "xMm": -6250, "yMm": 6000 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f1-ext-west",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "外部 - 带砖与金属立筋龙骨复合墙",
+        "start": { "xMm": -6250, "yMm": 6000 },
+        "end": { "xMm": -6250, "yMm": -6000 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f1-part-west-zone",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": -1800, "yMm": -6000 },
+        "end": { "xMm": -1800, "yMm": 6000 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f1-part-guest-bath",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": -6250, "yMm": -2000 },
+        "end": { "xMm": -1800, "yMm": -2000 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f1-part-bath-kitchen",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": -6250, "yMm": 1500 },
+        "end": { "xMm": -1800, "yMm": 1500 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f1-part-stair-west",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 2200, "yMm": 1500 },
+        "end": { "xMm": 2200, "yMm": 6000 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f1-part-stair-south",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 2200, "yMm": 3500 },
+        "end": { "xMm": 6250, "yMm": 3500 },
+        "heightMm": 4000
+      }
+    },
+    {
+      "id": "villa-f2-ext-south",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "外部 - 带砖与金属立筋龙骨复合墙",
+        "start": { "xMm": -5250, "yMm": -5000 },
+        "end": { "xMm": 5250, "yMm": -5000 },
+        "heightMm": 3200
+      }
+    },
+    {
+      "id": "villa-f2-ext-east",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "外部 - 带砖与金属立筋龙骨复合墙",
+        "start": { "xMm": 5250, "yMm": -5000 },
+        "end": { "xMm": 5250, "yMm": 5000 },
+        "heightMm": 3200
+      }
+    },
+    {
+      "id": "villa-f2-ext-north",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "外部 - 带砖与金属立筋龙骨复合墙",
+        "start": { "xMm": 5250, "yMm": 5000 },
+        "end": { "xMm": -5250, "yMm": 5000 },
+        "heightMm": 3200
+      }
+    },
+    {
+      "id": "villa-f2-ext-west",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "外部 - 带砖与金属立筋龙骨复合墙",
+        "start": { "xMm": -5250, "yMm": 5000 },
+        "end": { "xMm": -5250, "yMm": -5000 },
+        "heightMm": 3200
+      }
+    },
+    {
+      "id": "villa-f2-part-mid-x",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 0, "yMm": -5000 },
+        "end": { "xMm": 0, "yMm": 5000 },
+        "heightMm": 3200
+      }
+    },
+    {
+      "id": "villa-f2-part-mid-y",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": -5250, "yMm": 0 },
+        "end": { "xMm": 5250, "yMm": 0 },
+        "heightMm": 3200
+      }
+    },
+    {
+      "id": "villa-f2-part-ne-core-west",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 2600, "yMm": 0 },
+        "end": { "xMm": 2600, "yMm": 5000 },
+        "heightMm": 3200
+      }
+    },
+    {
+      "id": "villa-f2-part-ne-core-split",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": 2600, "yMm": 2500 },
+        "end": { "xMm": 5250, "yMm": 2500 },
+        "heightMm": 3200
+      }
+    },
+    {
+      "id": "villa-f2-part-nw-suite-east",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": { "xMm": -2600, "yMm": 0 },
+        "end": { "xMm": -2600, "yMm": 5000 },
+        "heightMm": 3200
+      }
+    }
+  ]
+}

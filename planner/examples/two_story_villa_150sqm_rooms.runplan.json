@@ -1,0 +1,114 @@
+{
+  "project": "two-story villa 150sqm first floor rooms",
+  "units": "millimeters",
+  "operations": [
+    {
+      "id": "villa-room-f1-open-living-dining",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "location": { "xMm": 2500, "yMm": -3000 }
+      }
+    },
+    {
+      "id": "villa-room-f1-guest",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "location": { "xMm": -4200, "yMm": -4200 }
+      }
+    },
+    {
+      "id": "villa-room-f1-bath",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "location": { "xMm": -4200, "yMm": -500 }
+      }
+    },
+    {
+      "id": "villa-room-f1-kitchen",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "location": { "xMm": -4200, "yMm": 3800 }
+      }
+    },
+    {
+      "id": "villa-room-f1-family-utility",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "location": { "xMm": 4200, "yMm": 4700 }
+      }
+    },
+    {
+      "id": "villa-room-f2-master-bedroom",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "location": { "xMm": -3000, "yMm": -3000 }
+      }
+    },
+    {
+      "id": "villa-room-f2-south-bedroom",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "location": { "xMm": 3000, "yMm": -3000 }
+      }
+    },
+    {
+      "id": "villa-room-f2-northwest-suite",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "location": { "xMm": -3900, "yMm": 3000 }
+      }
+    },
+    {
+      "id": "villa-room-f2-hall",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "location": { "xMm": -1300, "yMm": 3000 }
+      }
+    },
+    {
+      "id": "villa-room-f2-family-lounge",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "location": { "xMm": 1300, "yMm": 3000 }
+      }
+    },
+    {
+      "id": "villa-room-f2-bath",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "location": { "xMm": 3900, "yMm": 3700 }
+      }
+    },
+    {
+      "id": "villa-room-f2-study",
+      "command": "create_room",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 2",
+        "location": { "xMm": 3900, "yMm": 1200 }
+      }
+    }
+  ]
+}

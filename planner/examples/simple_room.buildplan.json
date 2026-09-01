@@ -1,0 +1,179 @@
+{
+  "schemaVersion": "1.0",
+  "intentSummary": "在 Level 1 上 dry-run 生成一个 8000mm x 6000mm、墙高 3000mm 的矩形房间外墙。",
+  "sourceAnalysis": {
+    "inputTypes": [
+      "text"
+    ],
+    "detectedScale": "尺寸由用户文本明确给出",
+    "confidence": 0.95,
+    "notes": [
+      "用户未指定墙类型，使用当前模型默认墙类型。"
+    ]
+  },
+  "target": {
+    "revitVersion": "2027",
+    "units": "mm",
+    "coordinateOrigin": "以当前项目坐标原点为房间西南角，沿 X 方向 8000mm，沿 Y 方向 6000mm。"
+  },
+  "safety": {
+    "dryRunRequired": true,
+    "needsUserConfirmation": true,
+    "riskLevel": "low",
+    "warnings": [
+      "这是 dry-run 计划，不会直接写入模型。",
+      "标高名称需要和模型中的实际标高一致。"
+    ]
+  },
+  "assumptions": [
+    "Level 1 是当前模型中的有效标高名称。",
+    "未指定墙类型时由 Revit 桥接层选择第一个可用墙类型。"
+  ],
+  "operations": [
+    {
+      "id": "op-001",
+      "command": "create_wall",
+      "description": "创建南侧墙。",
+      "dryRun": true,
+      "payload": {
+        "category": null,
+        "elementId": null,
+        "parameterName": null,
+        "value": null,
+        "doubleUnit": null,
+        "levelName": "Level 1",
+        "levelId": null,
+        "wallTypeName": null,
+        "wallTypeId": null,
+        "start": {
+          "xMm": 0,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 8000,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "heightMm": 3000,
+        "familyName": null,
+        "typeName": null,
+        "hostElementId": null,
+        "location": null,
+        "widthMm": null,
+        "notes": []
+      },
+      "confidence": 0.95,
+      "requires": []
+    },
+    {
+      "id": "op-002",
+      "command": "create_wall",
+      "description": "创建东侧墙。",
+      "dryRun": true,
+      "payload": {
+        "category": null,
+        "elementId": null,
+        "parameterName": null,
+        "value": null,
+        "doubleUnit": null,
+        "levelName": "Level 1",
+        "levelId": null,
+        "wallTypeName": null,
+        "wallTypeId": null,
+        "start": {
+          "xMm": 8000,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 8000,
+          "yMm": 6000,
+          "zMm": 0
+        },
+        "heightMm": 3000,
+        "familyName": null,
+        "typeName": null,
+        "hostElementId": null,
+        "location": null,
+        "widthMm": null,
+        "notes": []
+      },
+      "confidence": 0.95,
+      "requires": []
+    },
+    {
+      "id": "op-003",
+      "command": "create_wall",
+      "description": "创建北侧墙。",
+      "dryRun": true,
+      "payload": {
+        "category": null,
+        "elementId": null,
+        "parameterName": null,
+        "value": null,
+        "doubleUnit": null,
+        "levelName": "Level 1",
+        "levelId": null,
+        "wallTypeName": null,
+        "wallTypeId": null,
+        "start": {
+          "xMm": 8000,
+          "yMm": 6000,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 0,
+          "yMm": 6000,
+          "zMm": 0
+        },
+        "heightMm": 3000,
+        "familyName": null,
+        "typeName": null,
+        "hostElementId": null,
+        "location": null,
+        "widthMm": null,
+        "notes": []
+      },
+      "confidence": 0.95,
+      "requires": []
+    },
+    {
+      "id": "op-004",
+      "command": "create_wall",
+      "description": "创建西侧墙。",
+      "dryRun": true,
+      "payload": {
+        "category": null,
+        "elementId": null,
+        "parameterName": null,
+        "value": null,
+        "doubleUnit": null,
+        "levelName": "Level 1",
+        "levelId": null,
+        "wallTypeName": null,
+        "wallTypeId": null,
+        "start": {
+          "xMm": 0,
+          "yMm": 6000,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 0,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "heightMm": 3000,
+        "familyName": null,
+        "typeName": null,
+        "hostElementId": null,
+        "location": null,
+        "widthMm": null,
+        "notes": []
+      },
+      "confidence": 0.95,
+      "requires": []
+    }
+  ]
+}
+

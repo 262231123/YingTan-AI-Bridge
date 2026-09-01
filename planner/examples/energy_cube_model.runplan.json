@@ -1,0 +1,14 @@
+{
+  "project": "Energy Cube model",
+  "units": "millimeters",
+  "operations": [
+    {
+      "id": "energy-cube-model",
+      "command": "create_energy_cube_model",
+      "dryRun": false,
+      "payload": {
+        "concept": "Energy Cube"
+      }
+    }
+  ]
+}

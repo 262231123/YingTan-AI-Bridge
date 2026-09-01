@@ -1,0 +1,8 @@
+{
+  "command": "set_parameter",
+  "elementId": 123456,
+  "parameterName": "Comments",
+  "value": "由 Codex Dynamo 写入",
+  "dryRun": false
+}
+

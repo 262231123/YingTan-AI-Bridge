@@ -1,0 +1,284 @@
+{
+  "operations": [
+    {
+      "id": "fp-001",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": {
+          "xMm": 5000,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 10850,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-002",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": {
+          "xMm": 0,
+          "yMm": 4200,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 10850,
+          "yMm": 4200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-003",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": {
+          "xMm": 0,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 0,
+          "yMm": 4200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-004",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "常规 - 200mm",
+        "start": {
+          "xMm": 10850,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 10850,
+          "yMm": 4200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-005",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 0,
+          "yMm": 2200,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 1800,
+          "yMm": 2200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-006",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 3200,
+          "yMm": 2200,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 5200,
+          "yMm": 2200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-007",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 5200,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 5200,
+          "yMm": 2200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-008",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 5200,
+          "yMm": 3200,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 10850,
+          "yMm": 3200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-009",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 0,
+          "yMm": 3100,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 4600,
+          "yMm": 3100,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-010",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 4600,
+          "yMm": 3100,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 4600,
+          "yMm": 4200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-011",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 1800,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 1800,
+          "yMm": 2200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-012",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 0,
+          "yMm": 1250,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 1800,
+          "yMm": 1250,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-013",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 3200,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 3200,
+          "yMm": 2200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    },
+    {
+      "id": "fp-014",
+      "command": "create_wall",
+      "dryRun": false,
+      "payload": {
+        "levelName": "标高 1",
+        "wallTypeName": "内部 - 砌块墙 100",
+        "start": {
+          "xMm": 4200,
+          "yMm": 0,
+          "zMm": 0
+        },
+        "end": {
+          "xMm": 4200,
+          "yMm": 2200,
+          "zMm": 0
+        },
+        "heightMm": 3000
+      }
+    }
+  ]
+}

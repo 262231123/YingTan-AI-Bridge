@@ -1,0 +1,46 @@
+{
+  "project": "two-story villa construction drawing set",
+  "units": "millimeters",
+  "notes": [
+    "Creates grid axes, plan views, grid dimensions, building elevations, room elevations, sheets, and viewports.",
+    "The drawing bounds match the generated villa: first floor footprint 12500 x 12000 mm, centered at project origin."
+  ],
+  "operations": [
+    {
+      "id": "villa-construction-drawing-set",
+      "command": "create_drawing_set",
+      "dryRun": false,
+      "payload": {
+        "levelNames": ["标高 1", "标高 2"],
+        "minXmm": -6250,
+        "maxXmm": 6250,
+        "minYmm": -6000,
+        "maxYmm": 6000,
+        "topMm": 7200,
+        "gridPaddingMm": 1200,
+        "dimensionOffsetMm": 850,
+        "overallDimensionOffsetMm": 1450,
+        "elevationPaddingMm": 1000,
+        "elevationOffsetMm": 1500,
+        "roomElevationPaddingMm": 600,
+        "secondFloorHeightMm": 3200,
+        "planScale": 100,
+        "elevationScale": 100,
+        "roomElevationScale": 50,
+        "verticalAxes": [
+          { "name": "1", "xMm": -6250 },
+          { "name": "2", "xMm": -1800 },
+          { "name": "3", "xMm": 2200 },
+          { "name": "4", "xMm": 6250 }
+        ],
+        "horizontalAxes": [
+          { "name": "A", "yMm": -6000 },
+          { "name": "B", "yMm": -2000 },
+          { "name": "C", "yMm": 1500 },
+          { "name": "D", "yMm": 3500 },
+          { "name": "E", "yMm": 6000 }
+        ]
+      }
+    }
+  ]
+}
