@@ -159,6 +159,12 @@ internal sealed class AiSettings
             SettingsVersion = 6;
         }
 
+        if (SettingsVersion < 7)
+        {
+            // V7 expands built-in workflow skills and strengthens Script Studio validation.
+            SettingsVersion = 7;
+        }
+
         foreach (var skill in Skills)
         {
             skill.Normalize();
@@ -436,6 +442,94 @@ internal sealed class AgentSkill
                 Source = "内置",
                 TrustLevel = "官方内置",
                 TriggerKeywords = ["脚本", "代码", "C#", "ExternalCommand", "pyRevit", "Python", "Dynamo", ".dyn"],
+                RecommendedCommands = []
+            },
+            new AgentSkill
+            {
+                Name = "工作共享安全预检",
+                Description = "在批量修改前识别工作共享、元素所有权和中心模型风险。",
+                Instructions = "先读取活动文档并明确是否为工作共享模型、当前是否为本地副本、目标元素是否可编辑。现有原生命令不能同步中心或借用工作集；需要深入检查时只生成只读脚本，不得自动 EnableWorksharing、ReloadLatest 或 SynchronizeWithCentral。",
+                Category = "协作",
+                Source = "内置（依据 Autodesk Revit API 工作共享指南）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["工作共享", "中心模型", "本地模型", "工作集", "借用", "同步中心", "所有权"],
+                RecommendedCommands = ["get_active_document", "get_selection", "get_element"]
+            },
+            new AgentSkill
+            {
+                Name = "警告分诊与修复建议",
+                Description = "按类别、影响和可修复性组织 Revit 警告检查。",
+                Instructions = "先区分可由当前命令核实的问题与需要生成只读 Revit API 脚本读取 Document.GetWarnings 的问题。默认只输出分组报告和 ElementId，不自动删除、解绑或修改构件；修复必须拆成最小 Dry-run 计划。",
+                Category = "QA/QC",
+                Source = "内置（依据 Autodesk Revit API 文档）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["警告", "warnings", "重复标记", "重叠", "房间未封闭", "警告修复"],
+                RecommendedCommands = ["get_active_document", "get_element", "show_elements"]
+            },
+            new AgentSkill
+            {
+                Name = "族与类型标准审计",
+                Description = "检查族类型命名、重复类型、关键参数与放置条件。",
+                Instructions = "先用 list_family_symbols 获取可核实类型；需要读取族分类、共享参数或类型重复详情时生成只读脚本。不得自动覆盖族文件、删除类型或更改共享参数定义；任何规范化操作先输出旧值、目标值和受影响实例数。",
+                Category = "标准化",
+                Source = "内置",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["族检查", "族标准", "类型命名", "重复类型", "族参数", "族库"],
+                RecommendedCommands = ["list_family_symbols", "count_elements", "get_element", "set_parameter"]
+            },
+            new AgentSkill
+            {
+                Name = "阶段与设计方案审计",
+                Description = "核对构件阶段、视图阶段和设计选项归属。",
+                Instructions = "阶段和设计选项默认只读检查；先查询视图和目标构件，无法由原生命令核实时生成只读脚本。报告应区分创建阶段、拆除阶段、主模型与选项集，不得自动接受主方案或删除设计选项。",
+                Category = "QA/QC",
+                Source = "内置（依据 Autodesk Revit 2026 API 设置文档）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["阶段", "拆除", "现状", "设计选项", "方案", "主模型"],
+                RecommendedCommands = ["list_views", "get_selection", "get_element"]
+            },
+            new AgentSkill
+            {
+                Name = "链接与坐标核查",
+                Description = "检查 Revit 链接、共享坐标、定位方式与链接状态。",
+                Instructions = "默认生成只读审计脚本，列出链接实例、路径状态、变换、定位方式和共享坐标信息。不得自动发布坐标、获取坐标、重新载入或卸载链接；这类动作必须由用户在 Revit 中确认并操作。",
+                Category = "协调",
+                Source = "内置",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["链接", "共享坐标", "项目基点", "测量点", "坐标核查", "链接丢失"],
+                RecommendedCommands = ["get_active_document", "list_views"]
+            },
+            new AgentSkill
+            {
+                Name = "MEP 数据完整性检查",
+                Description = "检查机电构件的系统归属、连接器和关键参数完整性。",
+                Instructions = "现有原生命令只支持通用构件计数和参数读取；连接器、系统分类和未连接端检查应生成只读脚本。报告按专业和系统分组，并给出 ElementId；不得自动连接、断开或改系统。",
+                Category = "MEP",
+                Source = "内置",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["MEP", "机电", "风管", "水管", "桥架", "连接器", "未连接", "系统分类"],
+                RecommendedCommands = ["count_elements", "get_selection", "get_element", "show_elements"]
+            },
+            new AgentSkill
+            {
+                Name = "无障碍与规则检查脚本",
+                Description = "把企业或项目规则转成可追溯的只读检查脚本。",
+                Instructions = "先要求用户给出适用地区、规范版本、尺寸阈值和例外条件；不得凭常识宣称合规。生成的脚本只负责测量、标记和报告，结果必须注明单位、容差、规则来源和无法判断项。",
+                Category = "规则检查",
+                Source = "内置",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["无障碍", "净宽", "净高", "坡道", "规则检查", "规范检查", "合规"],
+                RecommendedCommands = ["get_active_document", "get_selection", "get_element", "show_elements"]
+            },
+            new AgentSkill
+            {
+                Name = "Dynamo 工作流编排",
+                Description = "设计 Dynamo 输入输出、节点分组、事务和版本兼容策略。",
+                Instructions = "优先生成小型可验证图或 Dynamo Python 节点，明确 IN/OUT、单位、空值行为和依赖包。写入必须通过 TransactionManager；不得假设第三方节点包已安装。复杂流程拆成读取、验证、写入三组。",
+                Category = "Dynamo",
+                Source = "内置",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["Dynamo", ".dyn", "节点", "IN", "OUT", "图编排"],
                 RecommendedCommands = []
             },
             new AgentSkill

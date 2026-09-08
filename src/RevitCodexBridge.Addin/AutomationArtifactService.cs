@@ -15,7 +15,7 @@ internal static class AutomationArtifactService
 {
     private static readonly string[] TriggerWords =
     [
-        "脚本", "代码", "externalcommand", "pyrevit", "python", "dynamo", ".dyn", "节点图"
+        "脚本", "代码", "externalcommand", "pyrevit", "python", "dynamo", ".dyn", "节点图", "宏"
     ];
 
     private static readonly string[] ForbiddenCode =
@@ -33,6 +33,8 @@ internal static class AutomationArtifactService
             && (value.Contains("生成", StringComparison.OrdinalIgnoreCase)
                 || value.Contains("编写", StringComparison.OrdinalIgnoreCase)
                 || value.Contains("创建", StringComparison.OrdinalIgnoreCase)
+                || value.Contains("制作", StringComparison.OrdinalIgnoreCase)
+                || value.Contains("帮我做", StringComparison.OrdinalIgnoreCase)
                 || value.Contains("写", StringComparison.OrdinalIgnoreCase));
     }
 
@@ -42,8 +44,19 @@ internal static class AutomationArtifactService
         string revitVersion,
         CancellationToken cancellationToken = default)
     {
-        var profile = settings.GetActiveProfile();
-        var system = BuildSystemPrompt(revitVersion);
+        var configuredProfile = settings.GetActiveProfile();
+        var profile = new AiProviderProfile
+        {
+            Provider = configuredProfile.Provider,
+            DisplayName = configuredProfile.DisplayName,
+            BaseUrl = configuredProfile.BaseUrl,
+            Model = configuredProfile.Model,
+            EncryptedApiKey = configuredProfile.EncryptedApiKey,
+            ApiMode = configuredProfile.ApiMode,
+            TimeoutSeconds = Math.Max(configuredProfile.TimeoutSeconds, 120),
+            MaxTokens = Math.Max(configuredProfile.MaxTokens, 8192)
+        };
+        var system = BuildSystemPrompt(revitVersion, InferRequestedFormat(request));
         var result = await OpenAiCompatibleClient.CompleteAsync(profile, request, system, cancellationToken);
         if (!result.Succeeded || string.IsNullOrWhiteSpace(result.ResponseText))
         {
@@ -92,11 +105,12 @@ internal static class AutomationArtifactService
         return new AutomationArtifactResult(artifact.Reply, artifact.Format, filePath, sha256, warnings);
     }
 
-    private static string BuildSystemPrompt(string revitVersion) =>
+    private static string BuildSystemPrompt(string revitVersion, string requestedFormat) =>
         $"你是 YingTan Revit 脚本工作室。为 Revit {revitVersion} 生成一个完整但不执行的自动化工件。\n" +
+        $"用户要求的优先格式为 {requestedFormat}；除非用户明确表达其他格式，否则必须使用它。\n" +
         "仅输出一个 JSON 对象，不要 Markdown 代码围栏：\n" +
         "{\"reply\":\"中文说明\",\"artifact\":{\"format\":\"csharp-external-command|pyrevit-python|dynamo-python|dynamo-graph\",\"fileName\":\"文件名\",\"content\":\"完整文件内容\",\"description\":\"用途\",\"dependencies\":[\"依赖\"]}}\n" +
-        "根据用户措辞选择格式；未指定时优先 pyrevit-python。C# 必须实现 IExternalCommand；pyRevit 使用 revit.doc；Dynamo Python 使用 IN/OUT；dynamo-graph 必须输出可解析的 .dyn JSON，含 Nodes 和 Connectors。\n" +
+        "C# 必须实现 IExternalCommand 并声明 Autodesk.Revit.Attributes.Transaction；pyRevit 使用 revit.doc；Dynamo Python 使用 IN/OUT；dynamo-graph 必须输出可解析的 .dyn JSON，含 Nodes、Connectors 和 View。\n" +
         "所有模型写入必须使用 Revit Transaction 或 Dynamo TransactionManager，并在执行前校验活动文档、选择集、类型和参数。不得访问网络、启动进程、调用 PowerShell/cmd、操作注册表、删除文件、动态加载程序集或包含密钥。不得声称已经编译或执行。依赖不能内嵌二进制。";
 
     private static ParsedArtifact Parse(string response)
@@ -124,6 +138,14 @@ internal static class AutomationArtifactService
     {
         _ = ExtensionFor(format);
         var findings = new List<string>();
+        if (content.Length < 40)
+        {
+            findings.Add("阻止：工件内容过短，无法构成完整脚本。");
+        }
+        if (content.Length > 500_000)
+        {
+            findings.Add("阻止：工件超过 500 KB 安全上限。");
+        }
         foreach (var token in ForbiddenCode.Where(token => content.IndexOf(token, StringComparison.OrdinalIgnoreCase) >= 0))
         {
             findings.Add($"阻止：检测到不允许的能力“{token}”。");
@@ -134,6 +156,16 @@ internal static class AutomationArtifactService
         {
             findings.Add("阻止：C# 工件未实现 IExternalCommand.Execute。");
         }
+        if (format == "csharp-external-command" &&
+            !content.Contains("Transaction(TransactionMode.", StringComparison.Ordinal))
+        {
+            findings.Add("阻止：C# ExternalCommand 未声明 TransactionAttribute。");
+        }
+        if (format == "dynamo-python" &&
+            (!content.Contains("IN[", StringComparison.Ordinal) || !content.Contains("OUT", StringComparison.Ordinal)))
+        {
+            findings.Add("阻止：Dynamo Python 工件缺少 IN/OUT 接口。");
+        }
 
         if (format == "dynamo-graph")
         {
@@ -141,9 +173,10 @@ internal static class AutomationArtifactService
             {
                 using var graph = JsonDocument.Parse(content);
                 if (!graph.RootElement.TryGetProperty("Nodes", out var nodes) || nodes.ValueKind != JsonValueKind.Array ||
-                    !graph.RootElement.TryGetProperty("Connectors", out var connectors) || connectors.ValueKind != JsonValueKind.Array)
+                    !graph.RootElement.TryGetProperty("Connectors", out var connectors) || connectors.ValueKind != JsonValueKind.Array ||
+                    !graph.RootElement.TryGetProperty("View", out var view) || view.ValueKind != JsonValueKind.Object)
                 {
-                    findings.Add("阻止：Dynamo 图缺少 Nodes 或 Connectors 数组。");
+                    findings.Add("阻止：Dynamo 图缺少 Nodes、Connectors 或 View。");
                 }
             }
             catch (JsonException)
@@ -177,6 +210,26 @@ internal static class AutomationArtifactService
     {
         string[] tokens = ["Wall.Create", "NewFamilyInstance", ".Set(", ".Delete(", "doc.Create", "Document.Create"];
         return tokens.Any(token => content.IndexOf(token, StringComparison.OrdinalIgnoreCase) >= 0);
+    }
+
+    private static string InferRequestedFormat(string request)
+    {
+        if (request.IndexOf(".dyn", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            request.IndexOf("节点图", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "dynamo-graph";
+        }
+        if (request.IndexOf("dynamo", StringComparison.OrdinalIgnoreCase) >= 0 &&
+            request.IndexOf("python", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "dynamo-python";
+        }
+        if (request.IndexOf("c#", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            request.IndexOf("externalcommand", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "csharp-external-command";
+        }
+        return "pyrevit-python";
     }
 
     private static string ExtensionFor(string format) => format switch

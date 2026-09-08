@@ -22,6 +22,7 @@
 - DeepSeek V4 Pro（`deepseek-v4-pro`）的内置 OpenAI-compatible API 配置。
 - 模型健康审计、参数治理、房间规划、门窗协调、交付预检和安全批处理等内置 Revit Skills。
 - 脚本工作室：从提示词生成 C# ExternalCommand、pyRevit、Dynamo Python 和基础 `.dyn`，通过静态检查后仅保存、不自动执行。
+- 新增工作共享、警告分诊、族标准、阶段/设计方案、链接坐标、MEP 数据、无障碍规则与 Dynamo 编排 Skills。
 
 ## 仓库状态
 
