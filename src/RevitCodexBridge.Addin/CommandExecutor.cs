@@ -25,13 +25,18 @@ internal static class CommandExecutor
 
 	public static object? Execute(UIApplication app, JsonElement payload)
 	{
+		DesignAgentTools.CheckDocument(app, payload);
 		string text = payload.GetRequiredString("command").ToLowerInvariant();
 		if (1 == 0)
 		{
 		}
 		object result = text switch
 		{
-			"run_batch" => RunBatch(app, payload), 
+			"run_batch" => RunBatch(app, payload),
+			"get_model_context" => DesignAgentTools.Context(app),
+			"find_elements" => DesignAgentTools.Find(app, payload),
+			"list_warnings" => DesignAgentTools.Warnings(GetDocument(app), payload),
+			"create_room_layout" => DesignAgentTools.RoomLayout(GetDocument(app), payload),
 			"get_active_document" => GetActiveDocument(app), 
 			"list_levels" => ListLevels(GetDocument(app)), 
 			"list_wall_types" => ListWallTypes(GetDocument(app)), 
@@ -134,7 +139,8 @@ internal static class CommandExecutor
 			{
 				if (num2 == 0)
 				{
-					val.Assimilate();
+					if (val.Assimilate() != TransactionStatus.Committed)
+						throw new InvalidOperationException("Revit did not commit the batch transaction group.");
 				}
 				else
 				{
@@ -956,6 +962,10 @@ internal static class CommandExecutor
 	{
 		switch (command)
 		{
+		case "get_model_context":
+		case "find_elements":
+		case "list_warnings":
+		case "create_room_layout":
 		case "get_active_document":
 		case "list_levels":
 		case "list_wall_types":
@@ -988,6 +998,8 @@ internal static class CommandExecutor
 	{
 		switch (command)
 		{
+		case "create_room_layout":
+		case "finish_toolkit_run":
 		case "set_parameter":
 		case "create_wall":
 		case "place_door":

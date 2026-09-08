@@ -4,6 +4,8 @@
 
 ## 当前状态
 
+0.5.0 预览版新增[对话式设计 Agent](docs/conversational-design.md)：实时模型上下文 → 连续查询 → 参数预检与错误修正 → 审阅执行 → 构件回读与核验。支持自然语言编辑选择集、查找构件、读取警告和创建矩形房间。
+
 已提供：
 
 - `src/RevitCodexBridge.Addin`：Revit 2027 add-in，目标框架 `net10.0-windows`。

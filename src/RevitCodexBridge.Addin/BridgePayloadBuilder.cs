@@ -12,6 +12,7 @@ internal static class BridgePayloadBuilder
         "place_door",
         "place_window",
         "create_room",
+        "create_room_layout",
         "create_compound_wall_type",
         "create_drawing_set",
         "create_energy_cube_model",
@@ -56,6 +57,7 @@ internal static class BridgePayloadBuilder
             var batchPayload = new JsonObject
             {
                 ["command"] = "run_batch",
+                ["expectedDocumentToken"] = root["expectedDocumentToken"]?.DeepClone(),
                 ["dryRun"] = !allowWrites,
                 ["atomic"] = true,
                 ["continueOnError"] = false,

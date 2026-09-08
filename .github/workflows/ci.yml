@@ -14,6 +14,8 @@ jobs:
           dotnet-version: 10.0.x
       - name: Build CLI
         run: dotnet build src/RevitCodexBridge.Cli/RevitCodexBridge.Cli.csproj --configuration Release
+      - name: Check conversational agent boundaries
+        run: dotnet run --project tests/AgentChecks --configuration Release
       - name: Build MCP server
         run: dotnet build src/RevitCodexBridge.Mcp/RevitCodexBridge.Mcp.csproj --configuration Release
       - name: Build shared contracts

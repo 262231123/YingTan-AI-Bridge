@@ -325,6 +325,33 @@ internal sealed class AgentSkill
             },
             new AgentSkill
             {
+                Name = "对话式设计执行",
+                Category = "建模", Source = "内置", TrustLevel = "官方内置", Version = "0.5.0",
+                Description = "从当前模型读取设计依赖，连续查询后创建矩形房间、墙、门窗或图纸。",
+                Instructions = "使用本轮 get_model_context 的标高、墙类型与选择集。矩形围合需求使用 create_room_layout，说明墙中心线尺寸、原点和不含门窗楼板；标高或类型有歧义时询问。不要用示例模型替代用户的具体设计需求。前一阶段的写入产生 ID 后，下一阶段再查询并放置门窗。",
+                TriggerKeywords = ["设计", "房间", "办公室", "会议室", "创建", "建模"],
+                RecommendedCommands = ["get_model_context", "find_elements", "create_room_layout", "create_wall", "place_door", "place_window"]
+            },
+            new AgentSkill
+            {
+                Name = "选择集连续编辑",
+                Category = "数据治理", Source = "内置", TrustLevel = "官方内置", Version = "0.5.0",
+                Description = "解析当前选择与条件过滤，核实真实参数后批量修改。",
+                Instructions = "@选择集和这些构件以本轮选择为准。find_elements 分页查询范围，get_element 核实参数存储类型、单位、旧值和可写性后才能 set_parameter；超过40项拆批次并明确未处理范围。",
+                TriggerKeywords = ["选择集", "选中", "这些", "注释", "批量", "修改"],
+                RecommendedCommands = ["get_selection", "find_elements", "get_element", "set_parameter"]
+            },
+            new AgentSkill
+            {
+                Name = "实时警告核查",
+                Category = "QA/QC", Source = "内置", TrustLevel = "官方内置", Version = "0.5.0",
+                Description = "直接读取 Revit 警告并分页定位问题构件。",
+                Instructions = "使用 list_warnings 获取真实警告，按 offset/limit 分页；get_element 核查、show_elements 定位。报告完整性取决于 hasMore，不把未读取的警告算作已审查；不会自动修复警告。",
+                TriggerKeywords = ["警告", "审计", "质量", "检查模型"],
+                RecommendedCommands = ["list_warnings", "get_element", "show_elements"]
+            },
+            new AgentSkill
+            {
                 Name = "建筑建模",
                 Description = "创建墙、门、窗和房间，并修改参数。",
                 Instructions = "建模前确认单位、标高、类型、坐标和关键尺寸。长度统一使用毫米；写操作必须先生成可 Dry-run 的计划。",

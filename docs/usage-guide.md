@@ -1,5 +1,7 @@
 # Revit Codex Bridge 使用说明
 
+新版聊天设计与操作流程、示例提示词和实测范围见[对话式设计 Agent](conversational-design.md)。
+
 本文说明如何在 Revit 2027 中加载桥接插件，并用 Codex/命令行控制当前打开的 Revit 模型。
 
 ## 1. 工作原理

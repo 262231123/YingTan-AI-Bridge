@@ -69,6 +69,8 @@ internal static class ChatHistoryStore
 
             var json = File.ReadAllText(HistoryPath, Encoding.UTF8);
             var conversations = JsonSerializer.Deserialize<List<ChatConversation>>(json, JsonOptions) ?? [];
+            // Plans refer to a particular open document session and must be regenerated after restart.
+            foreach (var conversation in conversations) conversation.PendingPlanJson = null;
             return new ObservableCollection<ChatConversation>(conversations.OrderByDescending(item => item.UpdatedAt));
         }
         catch (Exception ex)

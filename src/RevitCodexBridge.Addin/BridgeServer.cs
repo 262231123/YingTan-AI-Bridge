@@ -134,6 +134,11 @@ internal sealed class BridgeServer : IDisposable
                         {
                             "run_batch",
                             "get_active_document",
+                            "get_model_context",
+                            "find_elements",
+                            "list_warnings",
+                            "create_room_layout",
+                            "create_compound_wall_type",
                             "list_levels",
                             "list_wall_types",
                             "list_family_symbols",

@@ -211,7 +211,7 @@
             <Border x:Name="PendingPlanBar" Grid.Row="2" Margin="14,0,14,8" Padding="10,8" Background="#FFF8E8" BorderBrush="#E8D39B" BorderThickness="1" CornerRadius="4" Visibility="Collapsed">
                 <DockPanel>
                     <Button x:Name="ExecutePlanButton" DockPanel.Dock="Right" Content="执行计划" Style="{StaticResource PrimaryButton}" Margin="12,0,0,0" Click="ExecutePlanOnClick" />
-                    <TextBlock Text="计划已通过安全预演，等待写入模型" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="#66501B" />
+                    <TextBlock Text="参数预检通过，请审阅后执行" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="#66501B" />
                 </DockPanel>
             </Border>
 
@@ -234,7 +234,8 @@
                              ToolTip="输入消息，Ctrl+Enter 发送"
                              PreviewKeyDown="PromptBoxOnPreviewKeyDown" />
                     <DockPanel Grid.Row="1" LastChildFill="False">
-                        <TextBlock x:Name="ComposerHint" Text="AI 生成的写操作会先预演" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" FontSize="10" />
+                        <TextBlock x:Name="ComposerHint" Text="描述目标；可引用 @选择集、当前层" VerticalAlignment="Center" Foreground="{StaticResource MutedBrush}" FontSize="10" TextWrapping="Wrap" />
+                        <Button x:Name="StopButton" DockPanel.Dock="Right" Content="停止" Width="48" Margin="4,0" Visibility="Collapsed" Style="{StaticResource CommandButton}" Click="StopOnClick" />
                         <Button x:Name="SendButton" DockPanel.Dock="Right" Content="发送" Width="76" Style="{StaticResource PrimaryButton}" Click="SendOnClick" />
                     </DockPanel>
                 </Grid>

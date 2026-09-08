@@ -42,7 +42,7 @@ internal sealed class BridgeRuntime : IDisposable
         _externalEvent = externalEvent;
     }
 
-    public async Task<object?> EnqueueAsync(JsonElement payload, TimeSpan timeout)
+    public async Task<object?> EnqueueAsync(JsonElement payload, TimeSpan timeout, CancellationToken cancellationToken = default)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
@@ -51,7 +51,9 @@ internal sealed class BridgeRuntime : IDisposable
             throw new InvalidOperationException("Revit external event has not been initialized.");
         }
 
+        cancellationToken.ThrowIfCancellationRequested();
         var request = new PendingBridgeRequest(payload.Clone());
+        using var cancellation = cancellationToken.Register(() => request.CancelQueued());
         _pending.Enqueue(request);
         _externalEvent.Raise();
 
@@ -60,7 +62,10 @@ internal sealed class BridgeRuntime : IDisposable
 
         if (completed == timeoutTask)
         {
-            throw new TimeoutException("Revit did not process the request before the bridge timeout.");
+            if (request.CancelQueued())
+                throw new TimeoutException("Revit 未及时处理请求，已取消队列中的操作。");
+            // An operation already running in Revit cannot be safely abandoned or replayed.
+            return await request.Completion.ConfigureAwait(false);
         }
 
         return await request.Completion.ConfigureAwait(false);
@@ -70,6 +75,7 @@ internal sealed class BridgeRuntime : IDisposable
     {
         while (_pending.TryDequeue(out var request))
         {
+            if (!request.TryStart()) continue;
             var command = GetCommandName(request.Payload);
             LastCommand = command;
             BridgeLog.Info($"Executing command: {command}");

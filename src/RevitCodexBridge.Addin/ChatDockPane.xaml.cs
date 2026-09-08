@@ -16,6 +16,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
     private readonly BridgeRuntime _runtime;
     private readonly ObservableCollection<ChatConversation> _conversations;
     private bool _busy;
+    private CancellationTokenSource? _taskCancellation;
 
     internal ChatDockPane(BridgeRuntime runtime)
     {
@@ -58,6 +59,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
 
     private void NewConversationOnClick(object sender, RoutedEventArgs e)
     {
+        if (_busy) return;
         var conversation = CreateConversation();
         _conversations.Insert(0, conversation);
         ConversationList.SelectedItem = conversation;
@@ -67,6 +69,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
 
     private void DeleteConversationOnClick(object sender, RoutedEventArgs e)
     {
+        if (_busy) return;
         var conversation = SelectedConversation;
         if (conversation is null)
         {
@@ -107,6 +110,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
 
     private void SettingsOnClick(object sender, RoutedEventArgs e)
     {
+        if (_busy) return;
         using var form = new AiSettingsForm();
         var ownerHandle = Process.GetCurrentProcess().MainWindowHandle;
         var result = ownerHandle == IntPtr.Zero
@@ -144,6 +148,9 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
         }
 
         PromptBox.Clear();
+        conversation.PendingPlanJson = null;
+        _taskCancellation = new CancellationTokenSource();
+        var cancellationToken = _taskCancellation.Token;
         conversation.Messages.Add(new ChatMessage { Role = "user", Content = text });
         if (conversation.Title == "新对话")
         {
@@ -169,7 +176,8 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
                 var artifact = await AutomationArtifactService.GenerateAndSaveAsync(
                     settings,
                     text,
-                    _runtime.RevitVersion);
+                    _runtime.RevitVersion,
+                    cancellationToken);
                 var warningText = string.Join("\n", artifact.Warnings.Select(item => $"- {item}"));
                 conversation.Messages.Add(new ChatMessage
                 {
@@ -179,49 +187,13 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
                 return;
             }
 
-            RevitAiResponse response;
-            if (RevitAutomationFallback.ShouldUseNativeScript(conversation))
-            {
-                response = await RevitAutomationFallback.EnsureExecutableScriptAsync(
-                    settings,
-                    conversation,
-                    new RevitAiResponse(string.Empty, null));
-            }
-            else
-            {
-                response = await RevitAiOrchestrator.CompleteAsync(settings, conversation);
-                response = await RevitAutomationFallback.EnsureExecutableScriptAsync(settings, conversation, response);
-            }
-            var assistantText = response.Reply;
-
-            if (!string.IsNullOrWhiteSpace(response.PlanJson))
-            {
-                assistantText += "\n\nAI 自动化脚本已保存到 %LOCALAPPDATA%\\RevitCodexBridge\\automation-scripts。";
-            }
-
-            if (!string.IsNullOrWhiteSpace(response.PlanJson))
-            {
-                SetBusy(true, "正在 Revit 中安全预演计划...");
-                var payload = BridgePayloadBuilder.Build(response.PlanJson, allowWrites: false);
-                var preview = await _runtime.EnqueueAsync(payload, TimeSpan.FromMinutes(2));
-
-                if (BridgePayloadBuilder.HasMutation(response.PlanJson))
-                {
-                    conversation.PendingPlanJson = response.PlanJson;
-                    assistantText += "\n\n计划已通过安全预演。请检查说明后点击“执行计划”，写入前会按 Agent 设置进行确认。";
-                }
-                else
-                {
-                    SetBusy(true, "正在整理并解释 Revit 查询结果...");
-                    assistantText = await RevitAiOrchestrator.SummarizeExecutionResultAsync(
-                        settings,
-                        conversation,
-                        response.Reply,
-                        preview);
-                }
-            }
-
-            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = assistantText });
+            var turn = await RunAgentAsync(settings, conversation, cancellationToken);
+            conversation.PendingPlanJson = turn.PendingPlan;
+            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = turn.Reply });
+        }
+        catch (OperationCanceledException)
+        {
+            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = "本轮已停止。" });
         }
         catch (Exception ex)
         {
@@ -238,6 +210,8 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             Touch(conversation);
             RefreshConversation(conversation);
             SetBusy(false);
+            _taskCancellation?.Dispose();
+            _taskCancellation = null;
         }
     }
 
@@ -250,21 +224,50 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
         }
 
         SetBusy(true, "正在向 Revit 提交写入计划...");
+        _taskCancellation = new CancellationTokenSource();
+        var submitted = false;
+        var plan = conversation.PendingPlanJson;
+        conversation.PendingPlanJson = null;
+        SaveHistory();
         try
         {
             var settings = AiSettingsStore.Load();
             var payload = BridgePayloadBuilder.Build(
-                conversation.PendingPlanJson,
+                plan,
                 allowWrites: true,
                 confirmWrites: settings.Agent.ConfirmBeforeWrite);
-            var result = await _runtime.EnqueueAsync(payload, TimeSpan.FromMinutes(3));
+            var result = await _runtime.EnqueueAsync(payload, TimeSpan.FromMinutes(3), _taskCancellation.Token);
+            var error = AgentPlanPolicy.Failure(result);
+            if (error is not null) throw new InvalidOperationException(error);
+            var state = JsonSerializer.SerializeToElement(result);
+            if (!state.TryGetProperty("committed", out var committed) || committed.ValueKind != JsonValueKind.True)
+                throw new InvalidOperationException("Revit 没有返回批次已提交状态，未继续核验。" );
+            submitted = true;
 
             conversation.Messages.Add(new ChatMessage
             {
                 Role = "assistant",
-                Content = $"计划执行完成。\n\nRevit 返回：\n{RevitAiOrchestrator.FormatExecutionResult(result)}"
+                Content = $"Revit 已返回执行结果：\n{AgentPlanPolicy.BoundedResult(result)}"
             });
-            conversation.PendingPlanJson = null;
+            RefreshConversation(conversation);
+            using var planDocument = JsonDocument.Parse(plan);
+            var documentToken = planDocument.RootElement.GetProperty("expectedDocumentToken").GetString()!;
+            var verificationPlan = AgentPlanPolicy.VerificationPlan(result, documentToken);
+            if (verificationPlan is not null)
+            {
+                SetBusy(true, "正在重新读取修改后的构件…");
+                var check = await _runtime.EnqueueAsync(BridgePayloadBuilder.Build(verificationPlan, false), TimeSpan.FromMinutes(2), _taskCancellation.Token);
+                var checkError = AgentPlanPolicy.Failure(check);
+                if (checkError is not null) throw new InvalidOperationException(checkError);
+                conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = "修改后的构件回读（最多40个，返回内容可能截断）：\n" + AgentPlanPolicy.BoundedResult(check) });
+            }
+            var verification = await RunAgentAsync(settings, conversation, _taskCancellation.Token, verificationOnly: true,
+                expectedDocumentToken: documentToken);
+            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = verification.Reply });
+        }
+        catch (OperationCanceledException)
+        {
+            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = submitted ? "操作已返回，后续核验已停止。" : "执行已取消。" });
         }
         catch (Exception ex)
         {
@@ -272,7 +275,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             conversation.Messages.Add(new ChatMessage
             {
                 Role = "assistant",
-                Content = $"计划未写入模型：{ex.Message}",
+                Content = submitted ? $"操作已返回，但核验未完成：{ex.Message}" : $"执行未能确认成功，请核对模型和返回状态：{ex.Message}",
                 IsError = true
             });
         }
@@ -281,7 +284,27 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             Touch(conversation);
             RefreshConversation(conversation);
             SetBusy(false);
+            _taskCancellation?.Dispose();
+            _taskCancellation = null;
         }
+    }
+
+    private void StopOnClick(object sender, RoutedEventArgs e)
+    {
+        _taskCancellation?.Cancel();
+        ComposerHint.Text = "正在停止；已进入 Revit 的事务会完成或回滚…";
+    }
+
+    private async Task<AgentTurnResult> RunAgentAsync(AiSettings settings, ChatConversation conversation,
+        CancellationToken cancellationToken, bool verificationOnly = false, string? expectedDocumentToken = null)
+    {
+        SetBusy(true, "正在读取当前模型和选择集…");
+        var context = await _runtime.EnqueueAsync(JsonSerializer.SerializeToElement(new { command = "get_model_context", expectedDocumentToken }),
+            TimeSpan.FromSeconds(45), cancellationToken);
+        return await RevitAgentLoop.RunAsync(JsonSerializer.SerializeToElement(context),
+            (observations, ct) => RevitAiOrchestrator.CompleteAsync(settings, conversation, ct, observations, _runtime.RevitVersion),
+            (payload, ct) => _runtime.EnqueueAsync(payload, TimeSpan.FromMinutes(2), ct),
+            status => SetBusy(true, status), cancellationToken, verificationOnly);
     }
 
     private void AddAssistantMessage(string content)
@@ -302,9 +325,10 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
         _busy = busy;
         SendButton.IsEnabled = !busy;
         ExecutePlanButton.IsEnabled = !busy;
+        StopButton.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
         ConversationList.IsEnabled = !busy;
         BusyProgress.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
-        ComposerHint.Text = busy ? status ?? "处理中..." : "AI 生成的写操作会先预演";
+        ComposerHint.Text = busy ? status ?? "处理中..." : "描述目标；可引用 @选择集、当前层";
         RefreshRuntimeStatus();
     }
 
