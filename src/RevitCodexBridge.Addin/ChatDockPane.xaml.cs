@@ -163,6 +163,22 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
                 throw new InvalidOperationException("尚未配置 API Key。请点击右上角“配置”，填写模型接口后再发送消息。");
             }
 
+            if (AutomationArtifactService.ShouldGenerate(text))
+            {
+                SetBusy(true, "脚本工作室正在生成并检查工件...");
+                var artifact = await AutomationArtifactService.GenerateAndSaveAsync(
+                    settings,
+                    text,
+                    _runtime.RevitVersion);
+                var warningText = string.Join("\n", artifact.Warnings.Select(item => $"- {item}"));
+                conversation.Messages.Add(new ChatMessage
+                {
+                    Role = "assistant",
+                    Content = $"{artifact.Reply}\n\n脚本工作室已保存工件（未执行）：\n格式：{artifact.Format}\n路径：{artifact.FilePath}\nSHA-256：{artifact.Sha256}\n\n检查结果：\n{warningText}"
+                });
+                return;
+            }
+
             RevitAiResponse response;
             if (RevitAutomationFallback.ShouldUseNativeScript(conversation))
             {

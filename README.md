@@ -21,6 +21,7 @@
 - `docs/release-guide.md`：GitHub 发布、授权与安装包制作清单。
 - DeepSeek V4 Pro（`deepseek-v4-pro`）的内置 OpenAI-compatible API 配置。
 - 模型健康审计、参数治理、房间规划、门窗协调、交付预检和安全批处理等内置 Revit Skills。
+- 脚本工作室：从提示词生成 C# ExternalCommand、pyRevit、Dynamo Python 和基础 `.dyn`，通过静态检查后仅保存、不自动执行。
 
 ## 仓库状态
 
@@ -107,4 +108,5 @@ Revit API 不能被 Codex、Python、Node 或普通外部进程随意直接调�
 - [MCP Server 说明](src/RevitCodexBridge.Mcp/README.md)
 - [GitHub 发布指南](docs/release-guide.md)
 - [DeepSeek V4 Pro 与 Revit AI Skills](docs/deepseek-and-revit-skills.md)
+- [Revit 脚本工作室](docs/script-studio.md)
 - [贡献指南](CONTRIBUTING.md) 与 [安全策略](SECURITY.md)

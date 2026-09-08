@@ -153,6 +153,12 @@ internal sealed class AiSettings
             SettingsVersion = 5;
         }
 
+        if (SettingsVersion < 6)
+        {
+            // V6 introduces the local Script Studio artifact workflow.
+            SettingsVersion = 6;
+        }
+
         foreach (var skill in Skills)
         {
             skill.Normalize();
@@ -420,6 +426,17 @@ internal sealed class AgentSkill
                 TrustLevel = "官方内置",
                 TriggerKeywords = ["批量", "批处理", "原子", "回滚", "多步骤", "自动执行"],
                 RecommendedCommands = ["get_active_document", "list_levels", "list_wall_types", "list_family_symbols", "get_element"]
+            },
+            new AgentSkill
+            {
+                Name = "脚本工作室",
+                Description = "根据提示词生成 C# ExternalCommand、pyRevit、Dynamo Python 或基础 .dyn 工件。",
+                Instructions = "仅生成并保存代码，不自动编译或运行。必须禁止网络、外部进程、注册表、删除文件、动态加载和密钥；模型写入必须具有 Transaction。输出后进行静态检查，并要求用户人工审阅后在项目副本中测试。",
+                Category = "开发",
+                Source = "内置",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["脚本", "代码", "C#", "ExternalCommand", "pyRevit", "Python", "Dynamo", ".dyn"],
+                RecommendedCommands = []
             },
             new AgentSkill
             {

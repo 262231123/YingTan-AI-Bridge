@@ -99,6 +99,10 @@ API mode: ChatCompletions
 
 点击“测试连接”验证配置。API Key 使用 Windows DPAPI 按当前用户加密，不要将 `%LOCALAPPDATA%\RevitCodexBridge\ai-settings.json` 发布到 GitHub。
 
+### 通过提示词生成 Revit / Dynamo 脚本
+
+在聊天框中明确提出“生成/编写”以及目标格式，例如 C# ExternalCommand、pyRevit、Dynamo Python 或 `.dyn`。脚本工作室会生成完整工件、执行规则型静态检查，并保存到 `%LOCALAPPDATA%\RevitCodexBridge\script-studio`。它不会自动编译或执行，详见 [脚本工作室](script-studio.md)。
+
 ## 6. 基础验证
 
 保持 Revit 2027 打开，然后在 PowerShell 中执行：
