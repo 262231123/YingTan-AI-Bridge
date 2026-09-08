@@ -87,6 +87,18 @@ http://127.0.0.1:7878
 
 你可以在 Revit 功能区看到 `Codex` 面板和 `Codex Bridge` 按钮。点击它可以查看桥接状态。
 
+### 配置 DeepSeek V4 Pro
+
+在 Revit 的“模型接口设置”中选择 `DeepSeek V4 Pro`，填入你自己的 DeepSeek API Key 并保存。默认值为：
+
+```text
+Base URL: https://api.deepseek.com
+Model: deepseek-v4-pro
+API mode: ChatCompletions
+```
+
+点击“测试连接”验证配置。API Key 使用 Windows DPAPI 按当前用户加密，不要将 `%LOCALAPPDATA%\RevitCodexBridge\ai-settings.json` 发布到 GitHub。
+
 ## 6. 基础验证
 
 保持 Revit 2027 打开，然后在 PowerShell 中执行：

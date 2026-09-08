@@ -19,6 +19,8 @@
 - `docs/ai-planner-guide.md`：自然语言/图片到 BuildPlan 的使用说明。
 - `docs/completion-checklist.md`：当前完成度、试运行步骤和剩余生产化能力。
 - `docs/release-guide.md`：GitHub 发布、授权与安装包制作清单。
+- DeepSeek V4 Pro（`deepseek-v4-pro`）的内置 OpenAI-compatible API 配置。
+- 模型健康审计、参数治理、房间规划、门窗协调、交付预检和安全批处理等内置 Revit Skills。
 
 ## 仓库状态
 
@@ -104,4 +106,5 @@ Revit API 不能被 Codex、Python、Node 或普通外部进程随意直接调�
 - [AI Planner 指南](docs/ai-planner-guide.md)
 - [MCP Server 说明](src/RevitCodexBridge.Mcp/README.md)
 - [GitHub 发布指南](docs/release-guide.md)
+- [DeepSeek V4 Pro 与 Revit AI Skills](docs/deepseek-and-revit-skills.md)
 - [贡献指南](CONTRIBUTING.md) 与 [安全策略](SECURITY.md)

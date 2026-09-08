@@ -8,6 +8,7 @@ namespace RevitCodexBridge.Addin;
 internal enum AiProviderKind
 {
     OpenAI,
+    DeepSeek,
     Zhipu,
     Kimi,
     Volcengine
@@ -143,6 +144,13 @@ internal sealed class AiSettings
         if (SettingsVersion < 4)
         {
             SettingsVersion = 4;
+        }
+
+        if (SettingsVersion < 5)
+        {
+            // V5 adds DeepSeek V4 Pro as an OpenAI-compatible provider. Existing
+            // encrypted keys and active-provider choices are left untouched.
+            SettingsVersion = 5;
         }
 
         foreach (var skill in Skills)
@@ -349,6 +357,72 @@ internal sealed class AgentSkill
             },
             new AgentSkill
             {
+                Name = "模型健康审计",
+                Description = "按可解释口径检查模型基础信息、墙体、类型、视图、图纸与明细表完整性。",
+                Instructions = "先读取项目和当前文档，再分项检查标高、墙类型、墙体统计、视图、图纸和明细表。报告必须区分已核实事实、疑似问题和当前命令无法验证的项目；不得把未实现的碰撞检测或规范校核描述为已完成。",
+                Category = "QA/QC",
+                Source = "内置（参考公开 Revit MCP 工作流）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["模型健康", "模型审计", "质量检查", "QA", "QC", "模型检查", "健康度"],
+                RecommendedCommands = ["get_active_document", "list_levels", "list_wall_types", "analyze_walls", "list_views", "list_sheets", "list_schedules"]
+            },
+            new AgentSkill
+            {
+                Name = "参数治理",
+                Description = "检查选定构件的参数，并以最小变更计划规范化可写参数。",
+                Instructions = "先用 get_selection 和 get_element 核实 ElementId、参数名、存储类型、单位和只读状态。批量修改时逐项给出旧值与目标值，先 Dry-run；不得猜测参数名或把类型参数当作实例参数写入。",
+                Category = "数据治理",
+                Source = "内置（参考公开 Revit MCP 工作流）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["参数治理", "批量参数", "参数规范", "参数检查", "参数填写", "属性修改"],
+                RecommendedCommands = ["get_selection", "get_element", "set_parameter"]
+            },
+            new AgentSkill
+            {
+                Name = "空间与房间规划",
+                Description = "检查标高和房间放置条件，并生成可验证的房间创建计划。",
+                Instructions = "创建房间前先确认目标标高、坐标、边界闭合条件、名称和编号。当前能力不能自动证明边界闭合，必须明确提示用户在 Dry-run 后检查房间是否可放置。",
+                Category = "空间规划",
+                Source = "内置（参考公开 Revit MCP 工作流）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["房间规划", "空间规划", "创建房间", "房间编号", "房间名称", "空间"],
+                RecommendedCommands = ["get_active_document", "list_levels", "create_room"]
+            },
+            new AgentSkill
+            {
+                Name = "门窗宿主协调",
+                Description = "核实族类型、墙宿主和放置坐标后创建门窗。",
+                Instructions = "先查询门窗族类型，再通过选择集或构件详情确认墙宿主 ElementId；不得仅凭自然语言猜测宿主。放置前检查标高、族名、类型名和毫米坐标，写入必须先 Dry-run。",
+                Category = "建模",
+                Source = "内置（参考公开 Revit MCP 工作流）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["门窗", "放置门", "放置窗", "门族", "窗族", "宿主墙"],
+                RecommendedCommands = ["list_levels", "list_family_symbols", "get_selection", "get_element", "place_door", "place_window"]
+            },
+            new AgentSkill
+            {
+                Name = "交付预检",
+                Description = "在出图前核对视图、图纸、明细表及未放置内容。",
+                Instructions = "先列出视图、图纸和明细表，识别空图纸、未放置视图和统计异常，再决定是否生成图纸集。当前能力不执行 PDF、DWG 或 IFC 导出，用户要求导出时应说明限制。",
+                Category = "交付",
+                Source = "内置（参考公开 Revit MCP 工作流）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["交付预检", "出图检查", "发布检查", "图纸检查", "未放置视图", "空图纸"],
+                RecommendedCommands = ["list_views", "list_sheets", "list_schedules", "create_drawing_set"]
+            },
+            new AgentSkill
+            {
+                Name = "安全批量执行",
+                Description = "把多步骤模型修改组织成可审阅、可回滚的最小批次。",
+                Instructions = "先查询所有依赖，再将操作按依赖顺序组织。第一次执行保持 Dry-run；真实写入应使用原子批次，任一步失败则整体回滚。不得为了减少步骤而跳过类型、标高、宿主或 ElementId 核验。",
+                Category = "安全",
+                Source = "内置（参考公开 Revit MCP 操作技能）",
+                TrustLevel = "官方内置",
+                TriggerKeywords = ["批量", "批处理", "原子", "回滚", "多步骤", "自动执行"],
+                RecommendedCommands = ["get_active_document", "list_levels", "list_wall_types", "list_family_symbols", "get_element"]
+            },
+            new AgentSkill
+            {
                 Name = "视图与交付检查",
                 Description = "查询视图、图纸和明细表，辅助出图自动化。",
                 Instructions = "使用 list_views、list_sheets、list_schedules 核查交付内容；结果中使用中文视图类型说明，并指出模板、未放置视图或空图纸。",
@@ -421,6 +495,16 @@ internal static class AiProviderDefaults
                 Model = "gpt-4.1-mini",
                 TimeoutSeconds = 60,
                 MaxTokens = 512
+            },
+            new AiProviderProfile
+            {
+                Provider = AiProviderKind.DeepSeek,
+                DisplayName = "DeepSeek V4 Pro",
+                BaseUrl = "https://api.deepseek.com",
+                Model = "deepseek-v4-pro",
+                ApiMode = AiApiMode.ChatCompletions,
+                TimeoutSeconds = 120,
+                MaxTokens = 8192
             },
             new AiProviderProfile
             {
