@@ -20,6 +20,12 @@ internal sealed class ChatConversation
     public string? PendingPlanJson { get; set; }
 
     [JsonIgnore]
+    public string? PlatformFactsDocumentToken { get; set; }
+
+    [JsonIgnore]
+    public Dictionary<string, string> PlatformFacts { get; } = new();
+
+    [JsonIgnore]
     public string UpdatedText => UpdatedAt.LocalDateTime.ToString("MM-dd HH:mm");
 }
 

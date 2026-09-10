@@ -34,6 +34,11 @@ internal static class CommandExecutor
 		{
 			"run_batch" => RunBatch(app, payload),
 			"get_model_context" => DesignAgentTools.Context(app),
+			"list_grids" => SteelPlatformTools.ListGrids(GetDocument(app)),
+			"resolve_grid_region" => SteelPlatformTools.ResolveRegion(GetDocument(app), payload),
+			"list_structure_types" => SteelPlatformTools.Types(GetDocument(app), payload),
+			"preview_steel_platform" => SteelPlatformTools.PreviewPlatform(GetDocument(app), payload),
+			"create_steel_platform" => SteelPlatformTools.Create(GetDocument(app), payload),
 			"find_elements" => DesignAgentTools.Find(app, payload),
 			"list_warnings" => DesignAgentTools.Warnings(GetDocument(app), payload),
 			"create_room_layout" => DesignAgentTools.RoomLayout(GetDocument(app), payload),
@@ -962,6 +967,11 @@ internal static class CommandExecutor
 	{
 		switch (command)
 		{
+		case "list_grids":
+		case "resolve_grid_region":
+		case "list_structure_types":
+		case "preview_steel_platform":
+		case "create_steel_platform":
 		case "get_model_context":
 		case "find_elements":
 		case "list_warnings":
@@ -998,6 +1008,7 @@ internal static class CommandExecutor
 	{
 		switch (command)
 		{
+		case "create_steel_platform":
 		case "create_room_layout":
 		case "finish_toolkit_run":
 		case "set_parameter":

@@ -98,6 +98,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
 
     private void ConversationListOnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        AutoPlatformBox.IsChecked = false;
         var conversation = SelectedConversation;
         MessageItems.ItemsSource = conversation?.Messages;
         ConversationTitle.Text = conversation?.Title ?? "新对话";
@@ -189,7 +190,10 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
 
             var turn = await RunAgentAsync(settings, conversation, cancellationToken);
             conversation.PendingPlanJson = turn.PendingPlan;
-            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = turn.Reply });
+            var autoPlatform = AutoPlatformBox.IsChecked == true && AgentPlanPolicy.IsSinglePlatformPlan(turn.PendingPlan);
+            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = autoPlatform
+                ? turn.Reply.Replace("请核对以下实际操作后点击“执行计划”：", "自动平台建模即将执行以下方案：") : turn.Reply });
+            if (autoPlatform) await ExecutePlanAsync(conversation, autoPlatform: true);
         }
         catch (OperationCanceledException)
         {
@@ -223,10 +227,17 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             return;
         }
 
+        await ExecutePlanAsync(conversation, autoPlatform: false);
+    }
+
+    private async Task ExecutePlanAsync(ChatConversation conversation, bool autoPlatform)
+    {
+        var ownsCancellation = _taskCancellation is null;
+
         SetBusy(true, "正在向 Revit 提交写入计划...");
-        _taskCancellation = new CancellationTokenSource();
+        _taskCancellation ??= new CancellationTokenSource();
         var submitted = false;
-        var plan = conversation.PendingPlanJson;
+        var plan = conversation.PendingPlanJson ?? throw new InvalidOperationException("没有待执行计划。");
         conversation.PendingPlanJson = null;
         SaveHistory();
         try
@@ -235,7 +246,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             var payload = BridgePayloadBuilder.Build(
                 plan,
                 allowWrites: true,
-                confirmWrites: settings.Agent.ConfirmBeforeWrite);
+                confirmWrites: !autoPlatform && settings.Agent.ConfirmBeforeWrite);
             var result = await _runtime.EnqueueAsync(payload, TimeSpan.FromMinutes(3), _taskCancellation.Token);
             var error = AgentPlanPolicy.Failure(result);
             if (error is not null) throw new InvalidOperationException(error);
@@ -284,8 +295,11 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             Touch(conversation);
             RefreshConversation(conversation);
             SetBusy(false);
-            _taskCancellation?.Dispose();
-            _taskCancellation = null;
+            if (ownsCancellation)
+            {
+                _taskCancellation?.Dispose();
+                _taskCancellation = null;
+            }
         }
     }
 
@@ -301,10 +315,49 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
         SetBusy(true, "正在读取当前模型和选择集…");
         var context = await _runtime.EnqueueAsync(JsonSerializer.SerializeToElement(new { command = "get_model_context", expectedDocumentToken }),
             TimeSpan.FromSeconds(45), cancellationToken);
-        return await RevitAgentLoop.RunAsync(JsonSerializer.SerializeToElement(context),
+        var contextNode = JsonSerializer.SerializeToNode(context)!.AsObject();
+        var activeToken = contextNode["documentToken"]!.GetValue<string>();
+        if (conversation.PlatformFactsDocumentToken != activeToken)
+        {
+            conversation.PlatformFacts.Clear();
+            conversation.PlatformFactsDocumentToken = activeToken;
+        }
+        contextNode["previousPlatformQueriesInThisDocument"] = JsonSerializer.SerializeToNode(conversation.PlatformFacts);
+        if (!verificationOnly)
+        {
+            var names = conversation.Messages.Where(m => m.IsUser).Reverse().Select(m => PlatformLayout.ParseGridNames(m.Content)).FirstOrDefault(n => n is not null);
+            if (names is not null)
+            {
+                var documentToken = contextNode["documentToken"]!.GetValue<string>();
+                SetBusy(true, "正在读取指定轴网位置、尺寸及结构类型…");
+                try
+                {
+                    var region = await _runtime.EnqueueAsync(JsonSerializer.SerializeToElement(new
+                    {
+                        command = "resolve_grid_region", gridA = names[0], gridB = names[1], grid1 = names[2], grid2 = names[3], expectedDocumentToken = documentToken
+                    }), TimeSpan.FromSeconds(45), cancellationToken);
+                    contextNode["requestedGridRegion"] = JsonSerializer.SerializeToNode(region);
+                }
+                catch (InvalidOperationException ex) { contextNode["gridRegionError"] = ex.Message; }
+                var types = await _runtime.EnqueueAsync(JsonSerializer.SerializeToElement(new { command = "list_structure_types", expectedDocumentToken = documentToken }),
+                    TimeSpan.FromSeconds(45), cancellationToken);
+                contextNode["structureTypes"] = JsonSerializer.SerializeToNode(types);
+            }
+        }
+        return await RevitAgentLoop.RunAsync(JsonSerializer.SerializeToElement(contextNode),
             (observations, ct) => RevitAiOrchestrator.CompleteAsync(settings, conversation, ct, observations, _runtime.RevitVersion),
             (payload, ct) => _runtime.EnqueueAsync(payload, TimeSpan.FromMinutes(2), ct),
-            status => SetBusy(true, status), cancellationToken, verificationOnly);
+            status => SetBusy(true, status), cancellationToken, verificationOnly,
+            (plan, result) =>
+            {
+                using var query = JsonDocument.Parse(plan);
+                foreach (var op in query.RootElement.GetProperty("operations").EnumerateArray())
+                {
+                    var command = op.GetProperty("command").GetString()!;
+                    if (command is "preview_steel_platform" or "resolve_grid_region" or "list_structure_types")
+                        conversation.PlatformFacts[command] = "查询参数：" + op.GetRawText() + "\n返回数据：" + AgentPlanPolicy.BoundedResult(result);
+                }
+            });
     }
 
     private void AddAssistantMessage(string content)
@@ -325,6 +378,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
         _busy = busy;
         SendButton.IsEnabled = !busy;
         ExecutePlanButton.IsEnabled = !busy;
+        AutoPlatformBox.IsEnabled = !busy;
         StopButton.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
         ConversationList.IsEnabled = !busy;
         BusyProgress.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;

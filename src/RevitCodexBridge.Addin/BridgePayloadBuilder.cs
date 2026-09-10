@@ -13,6 +13,7 @@ internal static class BridgePayloadBuilder
         "place_window",
         "create_room",
         "create_room_layout",
+        "create_steel_platform",
         "create_compound_wall_type",
         "create_drawing_set",
         "create_energy_cube_model",

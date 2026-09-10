@@ -19,6 +19,7 @@ const string read = "{\"operations\":[{\"command\":\"get_selection\"}]}";
 const string write = "{\"operations\":[{\"command\":\"set_parameter\",\"elementId\":42,\"parameterName\":\"Comments\",\"value\":\"Review\"}]}";
 var call = 0;
 var executions = 0;
+var recordedReads = 0;
 var turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
 {
     call++;
@@ -30,8 +31,9 @@ var turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
     Check(payload.GetProperty("dryRun").GetBoolean(), "loop never dispatches writes");
     Check(payload.GetProperty("expectedDocumentToken").GetString() == "doc-A", "document binding preserved");
     return Task.FromResult<object?>(new { failures = 0, results = new[] { new { ok = true, result = new { selectedId = 42 } } } });
-}, _ => { }, CancellationToken.None);
+}, _ => { }, CancellationToken.None, recordQuery: (plan, result) => { recordedReads++; });
 Check(turn.PendingPlan is not null && executions == 2, "read then write preview in one user turn");
+Check(recordedReads == 1, "only successful read results are saved for multi-turn design context");
 
 call = 0;
 turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
@@ -72,6 +74,35 @@ try
     throw new Exception("Cancellation was ignored");
 }
 catch (OperationCanceledException) { Check(true, "cancellation between AI and dispatch prevents execution"); }
+var axisNames = PlatformLayout.ParseGridNames("我想在K-H轴/36-37轴区域内布置平台");
+Check(axisNames is not null && axisNames.SequenceEqual(new[] { "K", "H", "36", "37" }), "Chinese design sentence resolves the four exact grid names");
+var frame = PlatformLayout.Resolve(new("K", new(0, 0), new(0, 10000)), new("H", new(10000, 10000), new(10000, 0)),
+    new("36", new(0, 0), new(10000, 0)), new("37", new(10000, 12000), new(0, 12000)));
+Check(Math.Abs(frame.WidthMm - 10000) < 0.001 && Math.Abs(frame.LengthMm - 12000) < 0.001, "grid intersection ignores endpoint order and datum segment extents");
+var angle = Math.PI / 6;
+PlanPoint Rotate(PlanPoint p) => new PlanPoint(p.X * Math.Cos(angle) - p.Y * Math.Sin(angle), p.X * Math.Sin(angle) + p.Y * Math.Cos(angle)) + new PlanPoint(45000, -32000);
+AxisLine RotAxis(string name, PlanPoint a, PlanPoint b) => new(name, Rotate(a), Rotate(b));
+var rotated = PlatformLayout.Resolve(RotAxis("K", new(0, 0), new(0, 10000)), RotAxis("H", new(10000, 0), new(10000, 10000)),
+    RotAxis("36", new(0, 0), new(10000, 0)), RotAxis("37", new(0, 12000), new(10000, 12000)));
+Check((rotated.At(10000, 12000) - Rotate(new(10000, 12000))).Length < 0.001, "rotated and translated grid preserves world coordinates");
+var few = PlatformLayout.Build(rotated, 4000, 10000, 2000, 1000, 2000, 100, 0, 1, 1500);
+var more = PlatformLayout.Build(rotated, 4000, 10000, 2000, 1000, 2000, 100, 0, 3, 1500);
+Check(few.ColumnCount == 8 && more.ColumnCount == 16 && more.LongitudinalSpanMm < few.LongitudinalSpanMm, "few-column vs shorter-span candidates expose real tradeoff");
+Check(few.Decks.Select(x => x.TopMm).SequenceEqual(new[] {1000.0, 2000.0, 1000.0}) && few.Decks.Count == 3, "two operating decks and central equipment deck have requested top heights");
+Check(few.Members.Where(x => x.Kind == "beam").All(x => x.TopMm == 900 || x.TopMm == 1900), "beam tops lie below deck thickness");
+Check(few.Members.Where(x => x.Kind == "column").Select(x => x.Start).Distinct().Count() == few.ColumnCount, "inner columns are shared without duplicate columns");
+var badSizes = false;
+try { PlatformLayout.Build(frame, 8000, 10000, 2000, 1000, 2000, 100, 0, 1, 1500); } catch (InvalidOperationException) { badSizes = true; }
+Check(badSizes, "oversized platform cannot silently extend past the grid region");
+var badGrids = false;
+try { PlatformLayout.Resolve(new("K", new(0,0),new(0,10000)), new("H",new(10000,0),new(11000,10000)), new("36",new(0,0),new(10000,0)),new("37",new(0,10000),new(10000,10000))); }
+catch(InvalidOperationException) { badGrids = true; }
+Check(badGrids, "skewed nonrectangular grid is rejected rather than approximated");
+var platformPlan = AgentPlanPolicy.Normalize("{\"command\":\"create_steel_platform\",\"previewId\":\"abc\"}", "doc-A");
+Check(AgentPlanPolicy.IsSinglePlatformPlan(platformPlan) && BridgePayloadBuilder.HasMutation(platformPlan), "platform auto-execution limited to single platform mutation");
+Check(!AgentPlanPolicy.IsSinglePlatformPlan(write), "automatic platform mode does not authorize parameter edits");
+var dryPlatform = BridgePayloadBuilder.Build(platformPlan, false);
+Check(dryPlatform.GetProperty("operations")[0].GetProperty("dryRun").GetBoolean(), "steel platform dry-run propagated to host command");
 Console.WriteLine($"{passed} assertions passed.");
 
 namespace RevitCodexBridge.Addin
