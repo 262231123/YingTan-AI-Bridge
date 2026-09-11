@@ -60,7 +60,7 @@ internal static class RevitScriptCompiler
             if (type is null || type.Name is "ScriptEntry" or "ScriptBudget" || type.IsAnonymousType) continue;
             var ns = type.ContainingNamespace.ToDisplayString();
             if (!(ns == "System" || ns == "System.Linq" || ns == "System.Collections" || ns == "System.Collections.Generic"
-                || ns == "System.Text.Json" || ns == "Autodesk.Revit.DB" || ns.StartsWith("Autodesk.Revit.DB.", StringComparison.Ordinal)))
+                || ns == "System.Text.Json" || ns == "Autodesk.Revit.Creation" || ns == "Autodesk.Revit.DB" || ns.StartsWith("Autodesk.Revit.DB.", StringComparison.Ordinal)))
                 throw new InvalidOperationException("脚本不能访问此API：" + type.ToDisplayString());
         }
         var guarded = (CSharpSyntaxNode)new LoopGuard().Visit(tree.GetRoot())!;

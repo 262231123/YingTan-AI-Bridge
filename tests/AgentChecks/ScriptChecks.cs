@@ -30,6 +30,8 @@ internal static class ScriptChecks
         var run = Assembly.Load(bytes).GetType("ScriptEntry")!.GetMethod("Run")!;
         var json = (string)run.Invoke(null, new object[] { new Autodesk.Revit.DB.Document(), new ScriptBudget() })!;
         check(json.Contains("Test model"), "compiled script reads supplied document and returns JSON");
+        check(RevitScriptCompiler.Compile("return JsonSerializer.Serialize(new { id=doc.Create.NewFamilyInstance() });", refs).Length > 0,
+            "host-owned Revit creation factory allowed for family placement");
         var badApi = false;
         try { RevitScriptCompiler.Compile("return doc.DoesNotExist();", refs); } catch (InvalidOperationException) { badApi = true; }
         check(badApi, "unknown API fails compilation before execution");
@@ -49,5 +51,6 @@ internal static class ScriptChecks
 }
 
 // Portable API stand-ins only; host integration requires actual Revit.
-namespace Autodesk.Revit.DB { public class Document { public string Title => "Test model"; } }
+namespace Autodesk.Revit.DB { public class Document { public string Title => "Test model"; public Autodesk.Revit.Creation.Document Create => new(); } }
+namespace Autodesk.Revit.Creation { public class Document { public long NewFamilyInstance() => 42; } }
 namespace Autodesk.Revit.DB.Structure { public enum StructuralType { Beam } }
