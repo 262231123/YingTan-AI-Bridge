@@ -196,7 +196,9 @@ Skill 只提供本轮工作策略，不能扩展下方命令白名单。即使 S
     private static List<AgentSkill> SelectSkills(IEnumerable<AgentSkill> skills, string userRequest)
     {
         var candidates = skills
-            .Where(skill => skill.Enabled)
+            // File-only studio instructions must not disable the live script execution route.
+            // Artifact-only requests already return through AutomationArtifactService before this planner.
+            .Where(skill => skill.Enabled && !(skill.Name == "脚本工作室" && skill.Source == "内置"))
             .Select(skill => new { Skill = skill, Score = RelevanceScore(skill, userRequest) })
             .OrderByDescending(item => item.Score)
             .ThenBy(item => item.Skill.Name, StringComparer.OrdinalIgnoreCase)
