@@ -25,6 +25,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.14.0" />
+    <None Include="$(NuGetPackageRoot)microsoft.codeanalysis.common/4.14.0/ThirdPartyNotices.rtf" Link="Roslyn-ThirdPartyNotices.rtf" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
     <Reference Include="RevitAPI">
       <HintPath>$(RevitInstallDir)\RevitAPI.dll</HintPath>
       <Private>false</Private>

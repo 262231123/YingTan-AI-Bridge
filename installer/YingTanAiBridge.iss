@@ -58,6 +58,7 @@ Name: "inventor\2026"; Description: "Inventor 2026"; Check: HasPayload('inventor
 Name: "inventor\2027"; Description: "Inventor 2027"; Check: HasPayload('inventor\2027') and IsInventorInstalled('2027')
 
 [Files]
+Source: "..\THIRD-PARTY-NOTICES.md"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#PayloadDir}\revit\2020\*"; DestDir: "{localappdata}\YingTanAiBridge\Revit\2020"; Flags: recursesubdirs createallsubdirs ignoreversion skipifsourcedoesntexist; Components: revit\2020
 Source: "{#PayloadDir}\revit\2021\*"; DestDir: "{localappdata}\YingTanAiBridge\Revit\2021"; Flags: recursesubdirs createallsubdirs ignoreversion skipifsourcedoesntexist; Components: revit\2021
 Source: "{#PayloadDir}\revit\2022\*"; DestDir: "{localappdata}\YingTanAiBridge\Revit\2022"; Flags: recursesubdirs createallsubdirs ignoreversion skipifsourcedoesntexist; Components: revit\2022

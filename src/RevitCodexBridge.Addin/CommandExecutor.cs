@@ -34,6 +34,9 @@ internal static class CommandExecutor
 		{
 			"run_batch" => RunBatch(app, payload),
 			"get_model_context" => DesignAgentTools.Context(app),
+			"prepare_revit_script" => RevitScriptHost.Prepare(GetDocument(app), payload),
+			"query_revit_script" => RevitScriptHost.Query(GetDocument(app), payload),
+			"execute_revit_script" => RevitScriptHost.Execute(GetDocument(app), payload),
 			"list_grids" => SteelPlatformTools.ListGrids(GetDocument(app)),
 			"resolve_grid_region" => SteelPlatformTools.ResolveRegion(GetDocument(app), payload),
 			"list_structure_types" => SteelPlatformTools.Types(GetDocument(app), payload),
@@ -122,6 +125,7 @@ internal static class CommandExecutor
 						result = result
 					});
 				}
+				catch (OperationCanceledException) { throw; }
 				catch (Exception ex)
 				{
 					num2++;
@@ -967,6 +971,9 @@ internal static class CommandExecutor
 	{
 		switch (command)
 		{
+		case "prepare_revit_script":
+		case "query_revit_script":
+		case "execute_revit_script":
 		case "list_grids":
 		case "resolve_grid_region":
 		case "list_structure_types":
@@ -1008,6 +1015,7 @@ internal static class CommandExecutor
 	{
 		switch (command)
 		{
+		case "execute_revit_script":
 		case "create_steel_platform":
 		case "create_room_layout":
 		case "finish_toolkit_run":

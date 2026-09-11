@@ -29,6 +29,11 @@ internal static class AutomationArtifactService
     public static bool ShouldGenerate(string request)
     {
         var value = request ?? string.Empty;
+        // Explicit download-only / alternate-runtime artifacts remain in the studio.
+        // Requests to use C# scripts to inspect or operate the model belong to the live agent.
+        var exportOnly = new[] { "只生成", "仅生成", "不要执行", "不执行", "保存为", "导出脚本", "下载脚本", "dynamo", "pyrevit", "python", ".dyn", "externalcommand" }
+            .Any(word => value.Contains(word, StringComparison.OrdinalIgnoreCase));
+        if (!exportOnly) return false;
         return TriggerWords.Any(word => value.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0)
             && (value.Contains("生成", StringComparison.OrdinalIgnoreCase)
                 || value.Contains("编写", StringComparison.OrdinalIgnoreCase)

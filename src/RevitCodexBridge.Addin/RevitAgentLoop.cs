@@ -27,6 +27,7 @@ internal static class RevitAgentLoop
             observations.Add(new("user", "当前是已执行操作的核验阶段。只查询并报告已完成、未完成、待核实内容，不得生成新的写入。"));
         var seen = new HashSet<string>(StringComparer.Ordinal);
         var failures = 0;
+        var suggestedScriptFallback = false;
         for (var step = 1; step <= 8; step++)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -34,7 +35,18 @@ internal static class RevitAgentLoop
             var response = await complete(observations, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             if (string.IsNullOrWhiteSpace(response.PlanJson))
+            {
+                if (!verificationOnly && !suggestedScriptFallback &&
+                    (response.Reply.Contains("没有对应命令", StringComparison.Ordinal) || response.Reply.Contains("不支持该操作", StringComparison.Ordinal)
+                    || response.Reply.Contains("没有建模功能", StringComparison.Ordinal) || response.Reply.Contains("无法直接", StringComparison.Ordinal)))
+                {
+                    suggestedScriptFallback = true;
+                    observations.Add(new("assistant", response.Reply));
+                    observations.Add(new("user", "能力检查：原生命令不足不等于不能完成。本版可prepare_revit_script编译C#并审阅运行。请评估先生成query脚本获取缺失信息，再补充write操作。不得绕过用户授权、代码限制或结构验算；若仍确实不可行，请说明具体API/条件限制。"));
+                    continue;
+                }
                 return new(response.Reply, null, token);
+            }
             try
             {
                 var plan = AgentPlanPolicy.Normalize(response.PlanJson, token);
@@ -73,6 +85,7 @@ internal static class AgentPlanPolicy
     private static readonly HashSet<string> Allowed = new(StringComparer.Ordinal)
     {
         "get_active_document", "get_model_context", "find_elements", "list_warnings",
+        "prepare_revit_script", "query_revit_script", "execute_revit_script",
         "list_grids", "resolve_grid_region", "list_structure_types", "preview_steel_platform", "create_steel_platform",
         "list_levels", "list_wall_types", "list_family_symbols", "count_elements", "analyze_walls",
         "get_selection", "get_element", "list_views", "list_sheets", "list_schedules", "show_elements",
@@ -97,6 +110,8 @@ internal static class AgentPlanPolicy
             var op = node as JsonObject ?? throw new InvalidOperationException("每项操作必须为对象。");
             var command = op["command"]?.GetValue<string>() ?? "";
             if (!Allowed.Contains(command)) throw new InvalidOperationException("对话执行暂不支持命令：" + command);
+            if (command.EndsWith("_revit_script", StringComparison.Ordinal) && operations.Count != 1)
+                throw new InvalidOperationException("每个脚本准备/查询/执行必须单独一轮，不能混合批次。");
             if (op.ContainsKey("payload")) throw new InvalidOperationException("参数必须直接放在 operation 中，不使用 payload 包装。");
             op.Remove("confirmInRevit");
             op.Remove("dryRun");
@@ -151,7 +166,7 @@ internal static class AgentPlanPolicy
                 {
                     if (p.Name is "elementId" or "roomId" or "wallId" or "doorId" or "windowId"
                         && p.Value.ValueKind == JsonValueKind.Number && p.Value.TryGetInt64(out var id) && id > 0) ids.Add(id);
-                    if (p.Name is "wallIds" or "createdElementIds" && p.Value.ValueKind == JsonValueKind.Array)
+                    if (p.Name is "wallIds" or "createdElementIds" or "modifiedElementIds" && p.Value.ValueKind == JsonValueKind.Array)
                         foreach (var item in p.Value.EnumerateArray())
                             if (item.ValueKind == JsonValueKind.Number && item.TryGetInt64(out var n) && n > 0) ids.Add(n);
                     Collect(p.Value);
@@ -184,6 +199,7 @@ internal static class AgentPlanPolicy
     {
         "create_room_layout" => "创建矩形房间（四面墙 + 房间）", "set_parameter" => "修改构件参数",
         "create_steel_platform" => "创建设备钢结构平台（已预览方案）", "previewId" => "平台方案编号",
+        "execute_revit_script" => "执行已编译且试运行通过的C#脚本（仍须源码确认）", "scriptId" => "脚本编号",
         "create_wall" => "创建墙", "create_room" => "创建房间", "place_door" => "放置门", "place_window" => "放置窗",
         "create_drawing_set" => "生成图纸集", "create_energy_cube_model" => "创建示例模型",
         "elementId" => "构件ID", "parameterName" => "参数名", "value" => "目标值", "levelId" => "标高ID",

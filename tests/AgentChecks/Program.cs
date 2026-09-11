@@ -103,6 +103,16 @@ Check(AgentPlanPolicy.IsSinglePlatformPlan(platformPlan) && BridgePayloadBuilder
 Check(!AgentPlanPolicy.IsSinglePlatformPlan(write), "automatic platform mode does not authorize parameter edits");
 var dryPlatform = BridgePayloadBuilder.Build(platformPlan, false);
 Check(dryPlatform.GetProperty("operations")[0].GetProperty("dryRun").GetBoolean(), "steel platform dry-run propagated to host command");
+Rejected("{\"operations\":[{\"command\":\"query_revit_script\",\"scriptId\":\"draft\"},{\"command\":\"set_parameter\"}]}", "script operations cannot be mixed into a write batch");
+ScriptChecks.Run(Check);
+var fallbackCalls = 0;
+var fallback = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
+{
+    fallbackCalls++;
+    if (fallbackCalls == 2) Check(messages.Any(m => m.Content.Contains("prepare_revit_script")), "native capability refusal triggers script capability reminder");
+    return Task.FromResult(new RevitAiResponse("无法直接完成，需要确认具体API限制", null));
+}, (_, _) => throw new Exception("No script should execute without a plan"), _ => {}, CancellationToken.None);
+Check(fallbackCalls == 2 && fallback.PendingPlan is null, "unsupported fallback is bounded to one retry");
 Console.WriteLine($"{passed} assertions passed.");
 
 namespace RevitCodexBridge.Addin

@@ -12,6 +12,7 @@ public sealed class BridgeApplication : IExternalApplication
     public Result OnStartup(UIControlledApplication application)
     {
         BridgeLog.Info("Starting YingTan Revit AI Bridge.");
+        application.ControlledApplication.DocumentChanged += RevitScriptHost.DocumentChanged;
         _runtime = new BridgeRuntime(application.ControlledApplication.VersionNumber);
 
         var handler = new BridgeExternalEventHandler(_runtime);
@@ -51,6 +52,7 @@ public sealed class BridgeApplication : IExternalApplication
     public Result OnShutdown(UIControlledApplication application)
     {
         BridgeLog.Info("Stopping YingTan Revit AI Bridge.");
+        application.ControlledApplication.DocumentChanged -= RevitScriptHost.DocumentChanged;
         _server?.Dispose();
         _runtime?.Dispose();
         BridgeRuntime.Current = null;

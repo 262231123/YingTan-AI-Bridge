@@ -334,6 +334,15 @@ internal sealed class AgentSkill
             },
             new AgentSkill
             {
+                Name = "对话脚本补充查询与操作",
+                Category = "自动化", Source = "内置", TrustLevel = "官方内置", Version = "0.7.0",
+                Description = "原生命令不足时编译C#查询和变更脚本，审阅后获取真实数据并完成操作。",
+                Instructions = "优先原生命令，能力缺口使用prepare_revit_script而非直接拒绝。query模式获取真实项目数据，write模式补充建模；查询/试运行/提交分别强制源码确认。仅输出方法体，返回普通JSON数据，宿主管理事务。编译和Revit实际错误反馈后最多修正3次。不得请求自动放行、规避用户取消，或把静态检查说成安全沙箱。",
+                TriggerKeywords = ["脚本", "自动", "操作", "实现", "建模", "查询", "读取", "不支持"],
+                RecommendedCommands = ["prepare_revit_script", "query_revit_script", "execute_revit_script"]
+            },
+            new AgentSkill
+            {
                 Name = "轴网定位与设备钢平台",
                 Category = "钢结构", Source = "内置", TrustLevel = "官方内置", Version = "0.6.0",
                 Description = "读取本模型/链接轴网，比较分跨，试建并创建独立柱梁板设备平台。",

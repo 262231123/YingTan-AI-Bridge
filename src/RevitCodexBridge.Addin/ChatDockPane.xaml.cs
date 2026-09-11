@@ -354,7 +354,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
                 foreach (var op in query.RootElement.GetProperty("operations").EnumerateArray())
                 {
                     var command = op.GetProperty("command").GetString()!;
-                    if (command is "preview_steel_platform" or "resolve_grid_region" or "list_structure_types")
+                    if (command is "preview_steel_platform" or "resolve_grid_region" or "list_structure_types" or "prepare_revit_script" or "query_revit_script")
                         conversation.PlatformFacts[command] = "查询参数：" + op.GetRawText() + "\n返回数据：" + AgentPlanPolicy.BoundedResult(result);
                 }
             });
