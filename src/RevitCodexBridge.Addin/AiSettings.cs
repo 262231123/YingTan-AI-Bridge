@@ -165,6 +165,23 @@ internal sealed class AiSettings
             SettingsVersion = 7;
         }
 
+        if (SettingsVersion < 8)
+        {
+            // V8 fixes required script-mode guidance and removes a redundant
+            // structural-type query from the native steel-platform workflow.
+            var updatedSkills = AgentSkill.CreateDefaults();
+            foreach (var name in new[] { "对话脚本补充查询与操作", "轴网定位与设备钢平台" })
+            {
+                var current = Skills.FirstOrDefault(skill => skill.Name == name && skill.Source == "内置");
+                var updated = updatedSkills.First(skill => skill.Name == name);
+                if (current is null) continue;
+                current.Version = updated.Version;
+                current.Instructions = updated.Instructions;
+                current.RecommendedCommands = [.. updated.RecommendedCommands];
+            }
+            SettingsVersion = 8;
+        }
+
         foreach (var skill in Skills)
         {
             skill.Normalize();
@@ -335,18 +352,18 @@ internal sealed class AgentSkill
             new AgentSkill
             {
                 Name = "对话脚本补充查询与操作",
-                Category = "自动化", Source = "内置", TrustLevel = "官方内置", Version = "0.7.0",
+                Category = "自动化", Source = "内置", TrustLevel = "官方内置", Version = "0.7.5",
                 Description = "原生命令不足时编译C#查询和变更脚本，审阅后获取真实数据并完成操作。",
-                Instructions = "优先原生命令，能力缺口使用prepare_revit_script而非直接拒绝。query模式获取真实项目数据，write模式补充建模；查询/试运行/提交分别强制源码确认。仅输出方法体，返回普通JSON数据，宿主管理事务。编译和Revit实际错误反馈后最多修正3次。不得请求自动放行、规避用户取消，或把静态检查说成安全沙箱。",
+                Instructions = "优先原生命令并复用已读取字段，只在真实能力缺口时使用prepare_revit_script而非直接拒绝。prepare必须明确mode=query或write、purpose和code；query模式获取真实项目数据，write模式补充建模。查询/试运行/提交分别强制源码确认。仅输出方法体，返回普通JSON数据，宿主管理事务。编译和Revit实际错误反馈后最多修正3次。不得请求自动放行、规避用户取消，或把静态检查说成安全沙箱。",
                 TriggerKeywords = ["脚本", "自动", "操作", "实现", "建模", "查询", "读取", "不支持"],
                 RecommendedCommands = ["prepare_revit_script", "query_revit_script", "execute_revit_script"]
             },
             new AgentSkill
             {
                 Name = "轴网定位与设备钢平台",
-                Category = "钢结构", Source = "内置", TrustLevel = "官方内置", Version = "0.6.0",
+                Category = "钢结构", Source = "内置", TrustLevel = "官方内置", Version = "0.7.5",
                 Description = "读取本模型/链接轴网，比较分跨，试建并创建独立柱梁板设备平台。",
-                Instructions = "识别轴网后先resolve_grid_region和list_structure_types。轴距、交点、已有类型不能反问用户抄录。只询问模型无法提供的设备宽长、两侧方向、基准标高、荷载、支承、梁高上限、次梁间距。参数完整后preview_steel_platform比较柱数/跨度，确认概念方案再create_steel_platform；不能声称少柱方案同时具有最小梁高或通过结构验算。",
+                Instructions = "识别轴网后先resolve_grid_region和list_structure_types。轴距、交点、已有类型不能反问用户抄录。structureTypes已含梁depthMm和板thicknessMm，不得再用脚本重复查询截面。只询问模型无法提供的设备宽长、两侧方向、基准标高、荷载、支承、梁高上限、次梁间距。参数完整后立即返回preview_steel_platform的完整plan比较柱数/跨度，确认概念方案再create_steel_platform；不能声称少柱方案同时具有最小梁高或通过结构验算。",
                 TriggerKeywords = ["钢结构", "设备平台", "操作平台", "轴网", "立柱", "梁高", "轴区域", "轴/"],
                 RecommendedCommands = ["list_grids", "resolve_grid_region", "list_structure_types", "preview_steel_platform", "create_steel_platform"]
             },

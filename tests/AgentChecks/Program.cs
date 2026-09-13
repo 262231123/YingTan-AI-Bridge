@@ -71,6 +71,34 @@ turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
 }, _ => { }, CancellationToken.None);
 Check(call == 3 && executions == 2 && turn.PendingPlan is not null, "spoken preview promise is repaired and real query continues to a write plan");
 Check(AgentPlanPolicy.PromisesImmediateAction("先执行预览并生成真实ID") && !AgentPlanPolicy.PromisesImmediateAction("如果需要可以提供建模建议"), "immediate action promise detection is narrow");
+var platformContext = JsonSerializer.SerializeToElement(new
+{
+    documentToken = "doc-A",
+    requestedGridRegion = new { widthMm = 10000, lengthMm = 12000 },
+    structureTypes = new { beams = new[] { new { id = 7, depthMm = 240 } } }
+});
+turn = await RevitAgentLoop.RunAsync(platformContext, (messages, ct) =>
+{
+    Check(messages.Any(message => message.Content.Contains("不要再用prepare_revit_script重复查询")), "resolved platform facts explicitly route to native preview");
+    return Task.FromResult(new RevitAiResponse("请补充设备尺寸", null));
+}, (_, _) => throw new Exception("No query should run"), _ => { }, CancellationToken.None);
+var repairedQueryScript = AgentPlanPolicy.Normalize("""
+    {"operations":[{"command":"prepare_revit_script","description":"查询结构框架族类型的高度/截面/深度参数","code":"return JsonSerializer.Serialize(new { ok = true });"}]}
+    """, "doc-A");
+using (var repairedQuery = JsonDocument.Parse(repairedQueryScript))
+{
+    var operation = repairedQuery.RootElement.GetProperty("operations")[0];
+    Check(operation.GetProperty("mode").GetString() == "query", "missing script mode is safely repaired for an unambiguous query");
+    Check(operation.GetProperty("purpose").GetString()!.StartsWith("查询"), "script description supplies a missing purpose");
+}
+var explicitWriteScript = AgentPlanPolicy.Normalize("""
+    {"command":"prepare_revit_script","mode":"write","purpose":"创建一个经确认的模型构件","code":"return JsonSerializer.Serialize(new { createdElementIds = Array.Empty<long>() });"}
+    """, "doc-A");
+using (var explicitWrite = JsonDocument.Parse(explicitWriteScript))
+    Check(explicitWrite.RootElement.GetProperty("operations")[0].GetProperty("mode").GetString() == "write", "explicit write script mode is preserved");
+Rejected("{\"command\":\"prepare_revit_script\",\"purpose\":\"处理模型\",\"code\":\"return JsonSerializer.Serialize(new { ok = true });\"}", "ambiguous missing script mode rejected before Revit");
+Rejected("{\"command\":\"prepare_revit_script\",\"mode\":\"query\",\"purpose\":\"查询标高\"}", "missing script code rejected before Revit");
+Rejected("{\"command\":\"query_revit_script\"}", "missing script id rejected before Revit");
 Rejected("{\"operations\":[{\"command\":\"run_batch\"}]}", "nested batch rejected");
 Rejected("{\"operations\":[{\"command\":\"set_parameter\",\"payload\":{}}]}", "ambiguous payload wrapper rejected");
 Rejected("{\"command\":\"delete_everything\"}", "unknown command rejected");
