@@ -12,6 +12,9 @@ public sealed class BridgeApplication : IExternalApplication
     public Result OnStartup(UIControlledApplication application)
     {
         BridgeLog.Info("Starting YingTan Revit AI Bridge.");
+        application.ControlledApplication.DocumentOpened += OnDocumentOpened;
+        application.ControlledApplication.DocumentCreated += OnDocumentCreated;
+        application.ControlledApplication.DocumentClosing += OnDocumentClosing;
         application.ControlledApplication.DocumentChanged += RevitScriptHost.DocumentChanged;
         _runtime = new BridgeRuntime(application.ControlledApplication.VersionNumber);
 
@@ -52,12 +55,29 @@ public sealed class BridgeApplication : IExternalApplication
     public Result OnShutdown(UIControlledApplication application)
     {
         BridgeLog.Info("Stopping YingTan Revit AI Bridge.");
+        application.ControlledApplication.DocumentOpened -= OnDocumentOpened;
+        application.ControlledApplication.DocumentCreated -= OnDocumentCreated;
+        application.ControlledApplication.DocumentClosing -= OnDocumentClosing;
         application.ControlledApplication.DocumentChanged -= RevitScriptHost.DocumentChanged;
         _server?.Dispose();
         _runtime?.Dispose();
         BridgeRuntime.Current = null;
         ChatDockPane.Current = null;
         return Result.Succeeded;
+    }
+
+    private static void OnDocumentOpened(object? sender, Autodesk.Revit.DB.Events.DocumentOpenedEventArgs e) => RegisterDocument(e.Document);
+    private static void OnDocumentCreated(object? sender, Autodesk.Revit.DB.Events.DocumentCreatedEventArgs e) => RegisterDocument(e.Document);
+    private static void OnDocumentClosing(object? sender, Autodesk.Revit.DB.Events.DocumentClosingEventArgs e)
+    {
+        var document = e.Document;
+        DesignAgentTools.DocumentClosing(document);
+        RevitScriptHost.DocumentClosing(document);
+    }
+    private static void RegisterDocument(Document document)
+    {
+        DesignAgentTools.DocumentOpened(document);
+        RevitScriptHost.DocumentOpened(document);
     }
 
     private static void AddRibbonButtons(UIControlledApplication application)

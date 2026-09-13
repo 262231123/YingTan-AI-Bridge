@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
@@ -8,9 +7,10 @@ namespace RevitCodexBridge.Addin;
 
 internal static class DesignAgentTools
 {
-    private sealed class Identity { public string Token { get; } = Guid.NewGuid().ToString("N"); }
-    private static readonly ConditionalWeakTable<Document, Identity> Documents = new();
-    public static string Token(Document document) => Documents.GetValue(document, _ => new Identity()).Token;
+    private static readonly DocumentSessionTokens Documents = new();
+    public static string Token(Document document) => Documents.Get(document.CreationGUID);
+    public static void DocumentOpened(Document document) => Documents.Open(document.CreationGUID);
+    public static void DocumentClosing(Document document) => Documents.Close(document.CreationGUID);
 
     public static void CheckDocument(UIApplication app, JsonElement payload)
     {

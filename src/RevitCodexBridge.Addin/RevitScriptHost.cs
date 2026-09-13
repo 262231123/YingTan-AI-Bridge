@@ -10,7 +10,6 @@ namespace RevitCodexBridge.Addin;
 
 internal static class RevitScriptHost
 {
-    private sealed class Revision { public long Value; }
     private sealed class Prepared
     {
         public required string Token, Code, Hash, Mode, Purpose;
@@ -18,9 +17,15 @@ internal static class RevitScriptHost
         public DateTime Created = DateTime.UtcNow;
         public long? CheckedRevision;
     }
-    private static readonly ConditionalWeakTable<Document, Revision> Revisions = new();
+    private static readonly Dictionary<Guid, long> Revisions = new(); // Revit API event/ExternalEvent thread.
     private static readonly Dictionary<string, Prepared> Scripts = new(); // Revit ExternalEvent thread only.
-    public static void DocumentChanged(object? sender, DocumentChangedEventArgs e) => Revisions.GetValue(e.GetDocument(), _ => new Revision()).Value++;
+    public static void DocumentOpened(Document document) => Revisions[document.CreationGUID] = 0;
+    public static void DocumentClosing(Document document) => Revisions.Remove(document.CreationGUID);
+    public static void DocumentChanged(object? sender, DocumentChangedEventArgs e)
+    {
+        var guid = e.GetDocument().CreationGUID;
+        Revisions[guid] = CurrentRevision(guid) + 1;
+    }
 
     public static object Prepare(Document doc, JsonElement p)
     {
@@ -57,11 +62,11 @@ internal static class RevitScriptHost
         var script = Get(doc, p, "write");
         if (doc.IsReadOnly || doc.IsFamilyDocument || doc.IsModifiable) throw new InvalidOperationException("写脚本需要未处于事务内的可写项目文档。");
         var dryRun = p.GetOptionalBoolean("dryRun", true);
-        var revision = Revisions.GetValue(doc, _ => new Revision());
-        if (!dryRun && script.CheckedRevision != revision.Value) throw new InvalidOperationException("脚本未试运行，或试运行后文档发生变化；请重新预检。");
+        var revision = CurrentRevision(doc.CreationGUID);
+        if (!dryRun && script.CheckedRevision != revision) throw new InvalidOperationException("脚本未试运行，或试运行后文档发生变化；请重新预检。");
         // Never honor confirmInRevit=false for arbitrary scripts, including platform automatic mode.
         ScriptReviewWindow.Require(script.Purpose, script.Code, script.Hash, dryRun ? "试运行并回滚" : "正式提交", doc.Title);
-        if (!dryRun && script.CheckedRevision != revision.Value) throw new InvalidOperationException("审阅期间文档发生变化，请重新预检。");
+        if (!dryRun && script.CheckedRevision != CurrentRevision(doc.CreationGUID)) throw new InvalidOperationException("审阅期间文档发生变化，请重新预检。");
         script.CheckedRevision = null;
         using var group = new TransactionGroup(doc, "AI脚本：" + (dryRun ? "试运行" : "正式执行"));
         if (group.Start() != TransactionStatus.Started) throw new InvalidOperationException("不能开始脚本事务组。");
@@ -81,7 +86,7 @@ internal static class RevitScriptHost
             if (dryRun)
             {
                 if (group.RollBack() != TransactionStatus.RolledBack) throw new InvalidOperationException("试运行未正确回滚。");
-                script.CheckedRevision = revision.Value;
+                script.CheckedRevision = CurrentRevision(doc.CreationGUID);
                 BridgeLog.Info($"Script trial rolled back {p.GetRequiredString("scriptId")} {script.Hash}");
                 // Do not leak IDs created by the temporary transaction as valid subsequent input.
                 return new { dryRun = true, trialPassed = true, scriptId = p.GetRequiredString("scriptId"), sha256 = script.Hash,
@@ -108,6 +113,8 @@ internal static class RevitScriptHost
             throw new InvalidOperationException("脚本ID失效、模式不符或属于其他文档，请重新prepare_revit_script。");
         return script;
     }
+
+    private static long CurrentRevision(Guid guid) => Revisions.TryGetValue(guid, out var revision) ? revision : 0;
 
     private static IEnumerable<MetadataReference> References()
     {

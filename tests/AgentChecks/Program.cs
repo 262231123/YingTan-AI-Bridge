@@ -105,6 +105,12 @@ var dryPlatform = BridgePayloadBuilder.Build(platformPlan, false);
 Check(dryPlatform.GetProperty("operations")[0].GetProperty("dryRun").GetBoolean(), "steel platform dry-run propagated to host command");
 Rejected("{\"operations\":[{\"command\":\"query_revit_script\",\"scriptId\":\"draft\"},{\"command\":\"set_parameter\"}]}", "script operations cannot be mixed into a write batch");
 ScriptChecks.Run(Check);
+var sessionTokens = new DocumentSessionTokens();
+var documentGuid = Guid.NewGuid();
+var firstToken = sessionTokens.Get(documentGuid);
+Check(firstToken == sessionTokens.Get(documentGuid), "same native document identity keeps one plan token across wrapper calls");
+sessionTokens.Close(documentGuid);
+Check(firstToken != sessionTokens.Get(documentGuid), "reopened document receives a new plan token");
 var fallbackCalls = 0;
 var fallback = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
 {
