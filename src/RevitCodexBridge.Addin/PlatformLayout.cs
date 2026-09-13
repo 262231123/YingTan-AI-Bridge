@@ -26,7 +26,7 @@ internal static class PlatformLayout
 {
     public static string[]? ParseGridNames(string text)
     {
-        var match = Regex.Match(text, @"(?<a>[A-Za-z\d]+)\s*[-－—~～]\s*(?<b>[A-Za-z\d]+)\s*轴\s*[/／、,，]\s*(?<c>[A-Za-z\d]+)\s*[-－—~～]\s*(?<d>[A-Za-z\d]+)\s*轴");
+        var match = Regex.Match(text, @"(?<a>[A-Za-z\d]+)\s*[-－—~～]\s*(?<b>[A-Za-z\d]+)\s*轴?\s*[/／、,，×xX]\s*(?<c>[A-Za-z\d]+)\s*[-－—~～]\s*(?<d>[A-Za-z\d]+)\s*轴?");
         return match.Success ? new[] { match.Groups["a"].Value, match.Groups["b"].Value, match.Groups["c"].Value, match.Groups["d"].Value } : null;
     }
 
@@ -59,10 +59,17 @@ internal static class PlatformLayout
     {
         var values = new[] { equipmentWidthMm, equipmentLengthMm, sideWidthMm, sideTopMm, equipmentTopMm, deckThicknessMm, foundationOffsetMm, maxSecondarySpacingMm };
         if (values.Any(v => !double.IsFinite(v))) throw new InvalidOperationException("平台尺寸必须为有限数值。");
-        if (equipmentWidthMm < 500 || equipmentLengthMm < 500 || sideWidthMm < 500 || sideTopMm < 500 || equipmentTopMm <= sideTopMm
-            || deckThicknessMm <= 0 || deckThicknessMm >= sideTopMm || foundationOffsetMm >= sideTopMm - deckThicknessMm
-            || bays is < 1 or > 6 || maxSecondarySpacingMm < 300)
-            throw new InvalidOperationException("设备/侧平台尺寸、顶高、板厚、基础偏移或分跨参数无效。");
+        if (equipmentWidthMm < 500) throw new InvalidOperationException("equipmentWidthMm必须大于等于500mm。");
+        if (equipmentLengthMm < 500) throw new InvalidOperationException("equipmentLengthMm必须大于等于500mm。");
+        if (sideWidthMm < 500) throw new InvalidOperationException("sideWidthMm必须大于等于500mm。");
+        if (sideTopMm < 500) throw new InvalidOperationException("sideTopMm必须大于等于500mm。");
+        if (equipmentTopMm <= sideTopMm) throw new InvalidOperationException("equipmentTopMm必须高于sideTopMm；两者相等会生成重合梁。");
+        if (deckThicknessMm <= 0 || deckThicknessMm >= sideTopMm)
+            throw new InvalidOperationException("平台板厚必须大于0且小于sideTopMm。");
+        if (foundationOffsetMm >= sideTopMm - deckThicknessMm)
+            throw new InvalidOperationException("foundationOffsetMm必须小于低平台板底高；0mm是有效值。");
+        if (bays is < 1 or > 6) throw new InvalidOperationException("bays必须是1至6的整数。");
+        if (maxSecondarySpacingMm < 300) throw new InvalidOperationException("secondarySpacingMm必须大于等于300mm。");
         var width = equipmentWidthMm + 2 * sideWidthMm;
         if (width > frame.WidthMm + 0.1 || equipmentLengthMm > frame.LengthMm + 0.1)
             throw new InvalidOperationException("设备平台加两侧操作带超出轴网区域；请减小尺寸或调整操作带方向。");

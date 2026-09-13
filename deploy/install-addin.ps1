@@ -2,7 +2,8 @@ param(
     [string] $Configuration = "Release",
     [string] $RevitVersion = "2027",
     [string] $AssemblyPath = "",
-    [string] $AddinsDir = ""
+    [string] $AddinsDir = "",
+    [string] $DestinationDir = ""
 )
 
 $ErrorActionPreference = "Stop"
@@ -28,7 +29,11 @@ if (-not (Test-Path -LiteralPath $AssemblyPath)) {
 }
 
 $sourceDir = Split-Path -Parent $AssemblyPath
-$installDir = Join-Path $env:LOCALAPPDATA "YingTanAiBridge\Revit\$RevitVersion"
+if ([string]::IsNullOrWhiteSpace($DestinationDir)) {
+    $DestinationDir = Join-Path $env:LOCALAPPDATA "YingTanAiBridge\Revit\$RevitVersion"
+}
+
+$installDir = $DestinationDir
 New-Item -ItemType Directory -Force -Path $installDir | Out-Null
 Get-ChildItem -LiteralPath $sourceDir -File |
     Copy-Item -Destination $installDir -Force

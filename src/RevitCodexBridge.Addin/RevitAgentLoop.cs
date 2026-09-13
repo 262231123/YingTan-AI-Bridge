@@ -45,12 +45,13 @@ internal static class RevitAgentLoop
             if (string.IsNullOrWhiteSpace(response.PlanJson))
             {
                 if (!verificationOnly && missingActionRepairs < 2
-                    && (string.IsNullOrWhiteSpace(response.Reply) || AgentPlanPolicy.PromisesImmediateAction(response.Reply)))
+                    && (string.IsNullOrWhiteSpace(response.Reply) || AgentPlanPolicy.PromisesImmediateAction(response.Reply)
+                        || AgentPlanPolicy.LooksLikeTruncatedProtocol(response.Reply)))
                 {
                     missingActionRepairs++;
                     if (!string.IsNullOrWhiteSpace(response.Reply)) observations.Add(new("assistant", response.Reply));
                     observations.Add(new("user",
-                        "协议校验：你刚才返回了空内容，或声称现在/接下来会查询、编译、创建或执行，但plan是null。宿主不会从reply文字推测命令，也不存在稍后自动运行。若参数已在模型上下文或对话中明确，立即返回含真实命令和全部参数的plan；如需脚本，现在就返回prepare_revit_script（含mode、purpose、code）。若确实缺参数，只询问缺失项，不要声称正在执行。"));
+                        "协议校验：你刚才返回了空内容、被截断的JSON，或声称现在/接下来会查询、编译、创建或执行，但plan是null。宿主不会从reply文字推测命令，也不存在稍后自动运行。若参数已在模型上下文或对话中明确，立即返回简短、完整、含真实命令和全部参数的plan；如需脚本，现在就返回prepare_revit_script（含mode、purpose、code）。若确实缺参数，只询问缺失项，不要声称正在执行。"));
                     continue;
                 }
                 if (!verificationOnly && !suggestedScriptFallback &&
@@ -226,6 +227,22 @@ internal static class AgentPlanPolicy
             "准备调用", "准备执行", "开始调用", "开始执行", "请稍后"
         };
         return phrases.Any(phrase => reply.Contains(phrase, StringComparison.Ordinal));
+    }
+
+    public static bool LooksLikeTruncatedProtocol(string reply)
+    {
+        if (string.IsNullOrWhiteSpace(reply)) return false;
+        var text = reply.Trim();
+        if (!text.Contains("\"reply\"", StringComparison.Ordinal) && !text.Contains("\"plan\"", StringComparison.Ordinal)) return false;
+        try
+        {
+            using var _ = JsonDocument.Parse(text);
+            return false;
+        }
+        catch (JsonException)
+        {
+            return true;
+        }
     }
 
     private static bool Inspect(JsonElement node)

@@ -71,6 +71,8 @@ turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
 }, _ => { }, CancellationToken.None);
 Check(call == 3 && executions == 2 && turn.PendingPlan is not null, "spoken preview promise is repaired and real query continues to a write plan");
 Check(AgentPlanPolicy.PromisesImmediateAction("先执行预览并生成真实ID") && !AgentPlanPolicy.PromisesImmediateAction("如果需要可以提供建模建议"), "immediate action promise detection is narrow");
+Check(AgentPlanPolicy.LooksLikeTruncatedProtocol("{\"reply\":\"重试\",\"plan\":{\"operations\":[")
+    && !AgentPlanPolicy.LooksLikeTruncatedProtocol("请补充设备宽度。"), "truncated JSON protocol response is detected narrowly");
 call = 0;
 executions = 0;
 turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
@@ -163,6 +165,9 @@ try
 catch (OperationCanceledException) { Check(true, "cancellation between AI and dispatch prevents execution"); }
 var axisNames = PlatformLayout.ParseGridNames("我想在K-H轴/36-37轴区域内布置平台");
 Check(axisNames is not null && axisNames.SequenceEqual(new[] { "K", "H", "36", "37" }), "Chinese design sentence resolves the four exact grid names");
+var shorthandAxisNames = PlatformLayout.ParseGridNames("在 K-H×16-17 区域直接建模");
+Check(shorthandAxisNames is not null && shorthandAxisNames.SequenceEqual(new[] { "K", "H", "16", "17" }),
+    "grid region parser accepts multiplication-sign shorthand without repeated axis suffixes");
 var frame = PlatformLayout.Resolve(new("K", new(0, 0), new(0, 10000)), new("H", new(10000, 10000), new(10000, 0)),
     new("36", new(0, 0), new(10000, 0)), new("37", new(10000, 12000), new(0, 12000)));
 Check(Math.Abs(frame.WidthMm - 10000) < 0.001 && Math.Abs(frame.LengthMm - 12000) < 0.001, "grid intersection ignores endpoint order and datum segment extents");
@@ -181,6 +186,10 @@ Check(few.Members.Where(x => x.Kind == "column").Select(x => x.Start).Distinct()
 var badSizes = false;
 try { PlatformLayout.Build(frame, 8000, 10000, 2000, 1000, 2000, 100, 0, 1, 1500); } catch (InvalidOperationException) { badSizes = true; }
 Check(badSizes, "oversized platform cannot silently extend past the grid region");
+var equalTopsRejected = false;
+try { PlatformLayout.Build(frame, 1000, 1800, 1000, 2000, 2000, 150, 0, 1, 1000); }
+catch (InvalidOperationException ex) { equalTopsRejected = ex.Message.Contains("equipmentTopMm") && ex.Message.Contains("sideTopMm"); }
+Check(equalTopsRejected, "invalid equal platform heights report the exact conflicting fields instead of blaming foundation offset");
 var badGrids = false;
 try { PlatformLayout.Resolve(new("K", new(0,0),new(0,10000)), new("H",new(10000,0),new(11000,10000)), new("36",new(0,0),new(10000,0)),new("37",new(0,10000),new(10000,10000))); }
 catch(InvalidOperationException) { badGrids = true; }
