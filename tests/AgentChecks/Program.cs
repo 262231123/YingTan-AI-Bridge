@@ -99,8 +99,7 @@ try { PlatformLayout.Resolve(new("K", new(0,0),new(0,10000)), new("H",new(10000,
 catch(InvalidOperationException) { badGrids = true; }
 Check(badGrids, "skewed nonrectangular grid is rejected rather than approximated");
 var platformPlan = AgentPlanPolicy.Normalize("{\"command\":\"create_steel_platform\",\"previewId\":\"abc\"}", "doc-A");
-Check(AgentPlanPolicy.IsSinglePlatformPlan(platformPlan) && BridgePayloadBuilder.HasMutation(platformPlan), "platform auto-execution limited to single platform mutation");
-Check(!AgentPlanPolicy.IsSinglePlatformPlan(write), "automatic platform mode does not authorize parameter edits");
+Check(BridgePayloadBuilder.HasMutation(platformPlan), "steel platform remains an explicit mutation plan");
 var dryPlatform = BridgePayloadBuilder.Build(platformPlan, false);
 Check(dryPlatform.GetProperty("operations")[0].GetProperty("dryRun").GetBoolean(), "steel platform dry-run propagated to host command");
 Rejected("{\"operations\":[{\"command\":\"query_revit_script\",\"scriptId\":\"draft\"},{\"command\":\"set_parameter\"}]}", "script operations cannot be mixed into a write batch");
@@ -111,6 +110,11 @@ var firstToken = sessionTokens.Get(documentGuid);
 Check(firstToken == sessionTokens.Get(documentGuid), "same native document identity keeps one plan token across wrapper calls");
 sessionTokens.Close(documentGuid);
 Check(firstToken != sessionTokens.Get(documentGuid), "reopened document receives a new plan token");
+var operationHistory = new BridgeOperationHistory();
+var successfulOperation = operationHistory.AddResult("get_model_context", DateTimeOffset.UtcNow, new { ok = true, count = 4 }, "测试模型");
+var failedOperation = operationHistory.AddResult("run_batch", DateTimeOffset.UtcNow, new { failures = 1, results = new[] { new { ok = false, error = "族类型未加载" } } }, "测试模型");
+Check(successfulOperation.Succeeded && !failedOperation.Succeeded && failedOperation.ErrorDetails.Contains("族类型未加载"), "operation history exposes semantic batch failure details");
+Check(operationHistory.Snapshot().Count == 2 && operationHistory.Snapshot()[1].Sequence > operationHistory.Snapshot()[0].Sequence, "operation history preserves ordered command records");
 var fallbackCalls = 0;
 var fallback = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
 {

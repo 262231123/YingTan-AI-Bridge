@@ -11,5 +11,6 @@
     <Compile Include="../../src/RevitCodexBridge.Addin/RevitAgentLoop.cs" Link="RevitAgentLoop.cs" />
     <Compile Include="../../src/RevitCodexBridge.Addin/BridgePayloadBuilder.cs" Link="BridgePayloadBuilder.cs" />
     <Compile Include="../../src/RevitCodexBridge.Addin/PendingBridgeRequest.cs" Link="PendingBridgeRequest.cs" />
+    <Compile Include="../../src/RevitCodexBridge.Addin/BridgeOperationHistory.cs" Link="BridgeOperationHistory.cs" />
   </ItemGroup>
 </Project>

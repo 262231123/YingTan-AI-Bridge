@@ -220,7 +220,6 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="38" />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <TextBox x:Name="PromptBox"
                              MinHeight="58"
@@ -239,16 +238,16 @@
                         <Button x:Name="StopButton" DockPanel.Dock="Right" Content="停止" Width="48" Margin="4,0" Visibility="Collapsed" Style="{StaticResource CommandButton}" Click="StopOnClick" />
                         <Button x:Name="SendButton" DockPanel.Dock="Right" Content="发送" Width="76" Style="{StaticResource PrimaryButton}" Click="SendOnClick" />
                     </DockPanel>
-                    <CheckBox x:Name="AutoPlatformBox" Grid.Row="2" Margin="2,6,0,0" IsChecked="False"
-                              ToolTip="仅对单个已预览的平台创建计划自动执行；仍会询问缺失的设计信息。切换对话后重置。">
-                        <TextBlock Text="自动创建设备平台（试建通过后执行）" TextWrapping="Wrap" />
-                    </CheckBox>
                 </Grid>
             </Border>
 
             <Border Grid.Row="4" Background="#ECEEF2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
                 <Grid Margin="10,0">
-                    <TextBlock x:Name="RuntimeStatus" VerticalAlignment="Center" FontSize="10" Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis" />
+                    <Button x:Name="RuntimeStatusButton" Padding="0" Background="Transparent" BorderThickness="0"
+                            HorizontalContentAlignment="Left" VerticalContentAlignment="Center" Cursor="Hand"
+                            ToolTip="点击查看每次 Revit 命令的成功、失败及返回明细" Click="RuntimeStatusOnClick">
+                        <TextBlock x:Name="RuntimeStatus" FontSize="10" Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis" />
+                    </Button>
                     <ProgressBar x:Name="BusyProgress" Height="2" VerticalAlignment="Top" IsIndeterminate="True" Visibility="Collapsed" />
                 </Grid>
             </Border>

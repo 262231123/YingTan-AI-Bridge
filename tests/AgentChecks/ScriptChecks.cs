@@ -44,7 +44,7 @@ internal static class ScriptChecks
         catch (TargetInvocationException e) { stopped = e.InnerException is InvalidOperationException; }
         check(stopped, "instrumented infinite loop stops at cooperative budget");
         var plan = AgentPlanPolicy.Normalize("{\"command\":\"execute_revit_script\",\"scriptId\":\"draft\"}", "doc-A");
-        check(BridgePayloadBuilder.HasMutation(plan) && !AgentPlanPolicy.IsSinglePlatformPlan(plan), "script writes cannot inherit platform auto authorization");
+        check(BridgePayloadBuilder.HasMutation(plan), "script execution remains an explicit mutation plan");
         check(BridgePayloadBuilder.Build(plan, false).GetProperty("operations")[0].GetProperty("dryRun").GetBoolean(), "script write preview stays dry-run");
         check(AgentPlanPolicy.VerificationPlan(new { data = new { modifiedElementIds = new[] { 42 } } }, "doc-A")!.Contains("42"), "script modified IDs feed native result verification");
     }

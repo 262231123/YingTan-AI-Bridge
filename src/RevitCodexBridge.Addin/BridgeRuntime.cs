@@ -7,6 +7,7 @@ namespace RevitCodexBridge.Addin;
 internal sealed class BridgeRuntime : IDisposable
 {
     private readonly ConcurrentQueue<PendingBridgeRequest> _pending = new();
+    private readonly BridgeOperationHistory _history = new();
     private ExternalEvent? _externalEvent;
     private bool _disposed;
     private long _processedCount;
@@ -36,6 +37,10 @@ internal sealed class BridgeRuntime : IDisposable
     public string? LastCommand { get; private set; }
 
     public string? LastError { get; private set; }
+
+    public event EventHandler? OperationRecorded;
+
+    public IReadOnlyList<BridgeOperationRecord> GetOperationHistory() => _history.Snapshot();
 
     public void AttachExternalEvent(ExternalEvent externalEvent)
     {
@@ -77,20 +82,34 @@ internal sealed class BridgeRuntime : IDisposable
         {
             if (!request.TryStart()) continue;
             var command = GetCommandName(request.Payload);
+            var startedAtUtc = DateTimeOffset.UtcNow;
+            var documentTitle = app.ActiveUIDocument?.Document?.Title;
             LastCommand = command;
             BridgeLog.Info($"Executing command: {command}");
 
             try
             {
                 var result = CommandExecutor.Execute(app, request.Payload);
-                Interlocked.Increment(ref _processedCount);
-                LastError = null;
+                var record = _history.AddResult(command, startedAtUtc, result, documentTitle);
+                if (record.Succeeded)
+                {
+                    Interlocked.Increment(ref _processedCount);
+                    LastError = null;
+                }
+                else
+                {
+                    Interlocked.Increment(ref _failedCount);
+                    LastError = record.ErrorDetails;
+                }
+                NotifyOperationRecorded();
                 request.SetResult(result);
             }
             catch (Exception ex)
             {
                 Interlocked.Increment(ref _failedCount);
                 LastError = ex.Message;
+                _history.AddException(command, startedAtUtc, ex, documentTitle);
+                NotifyOperationRecorded();
                 BridgeLog.Error($"Command failed: {command}", ex);
                 request.SetException(ex);
             }
@@ -114,5 +133,17 @@ internal sealed class BridgeRuntime : IDisposable
         return payload.TryGetProperty("command", out var command) && command.ValueKind == JsonValueKind.String
             ? command.GetString() ?? "<empty>"
             : "<missing>";
+    }
+
+    private void NotifyOperationRecorded()
+    {
+        try
+        {
+            OperationRecorded?.Invoke(this, EventArgs.Empty);
+        }
+        catch (Exception ex)
+        {
+            BridgeLog.Error("Operation history UI notification failed.", ex);
+        }
     }
 }

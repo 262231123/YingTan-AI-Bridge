@@ -178,14 +178,6 @@ internal static class AgentPlanPolicy
         return Normalize(JsonSerializer.Serialize(new { operations = ids.Take(40).Select(id => new { command = "get_element", elementId = id }) }), token);
     }
 
-    public static bool IsSinglePlatformPlan(string? plan)
-    {
-        if (string.IsNullOrWhiteSpace(plan)) return false;
-        using var doc = JsonDocument.Parse(plan);
-        return doc.RootElement.TryGetProperty("operations", out var ops) && ops.ValueKind == JsonValueKind.Array
-            && ops.GetArrayLength() == 1 && ops[0].GetProperty("command").GetString() == "create_steel_platform";
-    }
-
     public static string Describe(string plan)
     {
         using var doc = JsonDocument.Parse(plan);

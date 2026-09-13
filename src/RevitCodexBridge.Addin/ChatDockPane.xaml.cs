@@ -31,6 +31,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
         }
 
         ConversationList.SelectedIndex = 0;
+        _runtime.OperationRecorded += RuntimeOnOperationRecorded;
         RefreshProviderStatus();
         RefreshRuntimeStatus();
     }
@@ -98,7 +99,6 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
 
     private void ConversationListOnSelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        AutoPlatformBox.IsChecked = false;
         var conversation = SelectedConversation;
         MessageItems.ItemsSource = conversation?.Messages;
         ConversationTitle.Text = conversation?.Title ?? "新对话";
@@ -190,10 +190,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
 
             var turn = await RunAgentAsync(settings, conversation, cancellationToken);
             conversation.PendingPlanJson = turn.PendingPlan;
-            var autoPlatform = AutoPlatformBox.IsChecked == true && AgentPlanPolicy.IsSinglePlatformPlan(turn.PendingPlan);
-            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = autoPlatform
-                ? turn.Reply.Replace("请核对以下实际操作后点击“执行计划”：", "自动平台建模即将执行以下方案：") : turn.Reply });
-            if (autoPlatform) await ExecutePlanAsync(conversation, autoPlatform: true);
+            conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = turn.Reply });
         }
         catch (OperationCanceledException)
         {
@@ -227,10 +224,10 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             return;
         }
 
-        await ExecutePlanAsync(conversation, autoPlatform: false);
+        await ExecutePlanAsync(conversation);
     }
 
-    private async Task ExecutePlanAsync(ChatConversation conversation, bool autoPlatform)
+    private async Task ExecutePlanAsync(ChatConversation conversation)
     {
         var ownsCancellation = _taskCancellation is null;
 
@@ -246,7 +243,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             var payload = BridgePayloadBuilder.Build(
                 plan,
                 allowWrites: true,
-                confirmWrites: !autoPlatform && settings.Agent.ConfirmBeforeWrite);
+                confirmWrites: settings.Agent.ConfirmBeforeWrite);
             var result = await _runtime.EnqueueAsync(payload, TimeSpan.FromMinutes(3), _taskCancellation.Token);
             var error = AgentPlanPolicy.Failure(result);
             if (error is not null) throw new InvalidOperationException(error);
@@ -378,7 +375,6 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
         _busy = busy;
         SendButton.IsEnabled = !busy;
         ExecutePlanButton.IsEnabled = !busy;
-        AutoPlatformBox.IsEnabled = !busy;
         StopButton.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
         ConversationList.IsEnabled = !busy;
         BusyProgress.Visibility = busy ? Visibility.Visible : Visibility.Collapsed;
@@ -410,8 +406,18 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
     private void RefreshRuntimeStatus()
     {
         RuntimeStatus.Text = _busy
-            ? $"处理中 · Revit {_runtime.RevitVersion} · Pending {_runtime.PendingCount}"
-            : $"Bridge 已连接 · Revit {_runtime.RevitVersion} · 已处理 {_runtime.ProcessedCount} · 失败 {_runtime.FailedCount}";
+            ? $"处理中 · Revit {_runtime.RevitVersion} · 待处理 {_runtime.PendingCount} · 点击查看明细"
+            : $"Bridge 已连接 · Revit {_runtime.RevitVersion} · 成功 {_runtime.ProcessedCount} · 失败 {_runtime.FailedCount} · 点击查看明细";
+    }
+
+    private void RuntimeStatusOnClick(object sender, RoutedEventArgs e)
+    {
+        OperationHistoryWindow.ShowOrActivate(_runtime);
+    }
+
+    private void RuntimeOnOperationRecorded(object? sender, EventArgs e)
+    {
+        Dispatcher.BeginInvoke(RefreshRuntimeStatus, DispatcherPriority.Background);
     }
 
     private void RefreshEmptyState()
