@@ -20,6 +20,7 @@ internal sealed class AiSettingsForm : Form
 
     private readonly TextBox _agentNameTextBox = new();
     private readonly TextBox _agentPromptTextBox = new();
+    private readonly CheckBox _autoExecuteWritesCheckBox = new();
     private readonly CheckBox _confirmWritesCheckBox = new();
     private readonly CheckedListBox _specialistAgentsList = new();
 
@@ -187,12 +188,13 @@ internal sealed class AiSettingsForm : Form
     private Control CreateAgentPage()
     {
         var panel = UiTheme.CreateSurfacePanel(new Padding(18, 16, 18, 12));
-        var fields = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 6 };
+        var fields = new TableLayoutPanel { Dock = DockStyle.Fill, ColumnCount = 2, RowCount = 7 };
         fields.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 116));
         fields.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
         fields.RowStyles.Add(new RowStyle(SizeType.Absolute, 44));
         fields.RowStyles.Add(new RowStyle(SizeType.Absolute, 32));
         fields.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+        fields.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
         fields.RowStyles.Add(new RowStyle(SizeType.Absolute, 42));
         fields.RowStyles.Add(new RowStyle(SizeType.Absolute, 30));
         fields.RowStyles.Add(new RowStyle(SizeType.Absolute, 90));
@@ -203,6 +205,10 @@ internal sealed class AiSettingsForm : Form
         _agentPromptTextBox.ScrollBars = ScrollBars.Vertical;
         _agentPromptTextBox.AcceptsReturn = true;
         UiTheme.StyleTextBox(_agentPromptTextBox);
+
+        _autoExecuteWritesCheckBox.Text = "全局直接建模：内部预检通过后立即写入，不显示待执行计划";
+        _autoExecuteWritesCheckBox.Dock = DockStyle.Fill;
+        _autoExecuteWritesCheckBox.ForeColor = UiTheme.Text;
 
         _confirmWritesCheckBox.Text = "执行写操作前在 Revit 中再次确认";
         _confirmWritesCheckBox.Dock = DockStyle.Fill;
@@ -218,9 +224,10 @@ internal sealed class AiSettingsForm : Form
         fields.Controls.Add(UiTheme.CreateMutedLabel("定义角色、工作边界、专业偏好和回复方式。"), 1, 1);
         _agentPromptTextBox.Margin = new Padding(0, 0, 0, 8);
         fields.Controls.Add(_agentPromptTextBox, 1, 2);
-        fields.Controls.Add(_confirmWritesCheckBox, 1, 3);
-        fields.Controls.Add(UiTheme.CreateFieldLabel("专业 Agents"), 0, 4);
-        fields.Controls.Add(_specialistAgentsList, 1, 5);
+        fields.Controls.Add(_autoExecuteWritesCheckBox, 1, 3);
+        fields.Controls.Add(_confirmWritesCheckBox, 1, 4);
+        fields.Controls.Add(UiTheme.CreateFieldLabel("专业 Agents"), 0, 5);
+        fields.Controls.Add(_specialistAgentsList, 1, 6);
         panel.Controls.Add(fields);
         return panel;
     }
@@ -460,6 +467,7 @@ internal sealed class AiSettingsForm : Form
     {
         _agentNameTextBox.Text = _settings.Agent.Name;
         _agentPromptTextBox.Text = _settings.Agent.SystemPrompt;
+        _autoExecuteWritesCheckBox.Checked = _settings.Agent.AutoExecuteWrites;
         _confirmWritesCheckBox.Checked = _settings.Agent.ConfirmBeforeWrite;
     }
 
@@ -488,6 +496,7 @@ internal sealed class AiSettingsForm : Form
 
         _settings.Agent.Name = _agentNameTextBox.Text.Trim();
         _settings.Agent.SystemPrompt = _agentPromptTextBox.Text.Trim();
+        _settings.Agent.AutoExecuteWrites = _autoExecuteWritesCheckBox.Checked;
         _settings.Agent.ConfirmBeforeWrite = _confirmWritesCheckBox.Checked;
         for (var index = 0; index < _specialistAgentsList.Items.Count; index++)
         {
@@ -552,7 +561,7 @@ internal sealed class AiSettingsForm : Form
             _skillEnabledCheckBox.Checked = skill?.Enabled ?? false;
             _skillMetadataLabel.Text = skill is null
                 ? string.Empty
-                : $"{skill.Source} · {skill.TrustLevel} · v{skill.Version} · 写入始终需要确认";
+                : $"{skill.Source} · {skill.TrustLevel} · v{skill.Version} · 写入遵循全局执行模式";
         }
         finally
         {

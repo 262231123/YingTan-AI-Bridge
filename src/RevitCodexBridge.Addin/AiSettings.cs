@@ -197,6 +197,14 @@ internal sealed class AiSettings
             SettingsVersion = 9;
         }
 
+        if (SettingsVersion < 10)
+        {
+            // V10 executes every validated conversational mutation immediately
+            // instead of presenting a pending-plan preview.
+            Agent.AutoExecuteWrites = true;
+            SettingsVersion = 10;
+        }
+
         foreach (var skill in Skills)
         {
             skill.Normalize();
@@ -212,13 +220,16 @@ internal sealed class AgentProfile
 
     public bool ConfirmBeforeWrite { get; set; } = true;
 
+    public bool AutoExecuteWrites { get; set; } = true;
+
     public static AgentProfile CreateDefault()
     {
         return new AgentProfile
         {
             Name = "Revit 建筑助手",
             SystemPrompt = "你是建筑师和 Revit 建模助手。先理解用户意图，信息不足时明确提问；能够安全执行时生成最小、可验证的 Revit 操作计划。",
-            ConfirmBeforeWrite = true
+            ConfirmBeforeWrite = true,
+            AutoExecuteWrites = true
         };
     }
 }

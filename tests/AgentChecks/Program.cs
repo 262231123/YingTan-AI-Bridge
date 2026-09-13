@@ -71,6 +71,21 @@ turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
 }, _ => { }, CancellationToken.None);
 Check(call == 3 && executions == 2 && turn.PendingPlan is not null, "spoken preview promise is repaired and real query continues to a write plan");
 Check(AgentPlanPolicy.PromisesImmediateAction("先执行预览并生成真实ID") && !AgentPlanPolicy.PromisesImmediateAction("如果需要可以提供建模建议"), "immediate action promise detection is narrow");
+call = 0;
+executions = 0;
+turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
+{
+    call++;
+    if (call == 1) return Task.FromResult(new RevitAiResponse("先预览方案", "{\"command\":\"preview_steel_platform\"}"));
+    Check(messages.Any(message => message.Content.Contains("禁止执行preview_steel_platform")), "global direct mode repairs model attempts to preview");
+    return Task.FromResult(new RevitAiResponse("直接创建", "{\"command\":\"create_steel_platform_direct\",\"bays\":2}"));
+}, (_, _) =>
+{
+    executions++;
+    return Task.FromResult<object?>(new { committed = false, failures = 0 });
+}, _ => { }, CancellationToken.None, autoExecuteWrites: true);
+Check(call == 2 && executions == 1 && turn.PendingPlan is not null && turn.Reply.Contains("立即正式写入"),
+    "global direct mode skips scheme preview and returns the mutation for immediate commit");
 var platformContext = JsonSerializer.SerializeToElement(new
 {
     documentToken = "doc-A",

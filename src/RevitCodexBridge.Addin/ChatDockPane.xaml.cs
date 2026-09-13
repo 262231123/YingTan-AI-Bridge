@@ -191,6 +191,10 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
             var turn = await RunAgentAsync(settings, conversation, cancellationToken);
             conversation.PendingPlanJson = turn.PendingPlan;
             conversation.Messages.Add(new ChatMessage { Role = "assistant", Content = turn.Reply });
+            if (settings.Agent.AutoExecuteWrites && !string.IsNullOrWhiteSpace(turn.PendingPlan))
+            {
+                await ExecutePlanAsync(conversation);
+            }
         }
         catch (OperationCanceledException)
         {
@@ -354,7 +358,7 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
                     if (command is "preview_steel_platform" or "resolve_grid_region" or "list_structure_types" or "prepare_revit_script" or "query_revit_script")
                         conversation.PlatformFacts[command] = "查询参数：" + op.GetRawText() + "\n返回数据：" + AgentPlanPolicy.BoundedResult(result);
                 }
-            });
+            }, settings.Agent.AutoExecuteWrites);
     }
 
     private void AddAssistantMessage(string content)
@@ -400,7 +404,8 @@ public sealed partial class ChatDockPane : System.Windows.Controls.UserControl, 
         var settings = AiSettingsStore.Load();
         var profile = settings.GetActiveProfile();
         var keyText = profile.HasApiKey ? "已配置" : "未配置 Key";
-        ProviderStatus.Text = $"{settings.Agent.Name} · {profile.DisplayName} / {profile.Model} · {keyText}";
+        var executionMode = settings.Agent.AutoExecuteWrites ? "全局直接建模" : "计划审阅";
+        ProviderStatus.Text = $"{settings.Agent.Name} · {profile.DisplayName} / {profile.Model} · {executionMode} · {keyText}";
     }
 
     private void RefreshRuntimeStatus()
