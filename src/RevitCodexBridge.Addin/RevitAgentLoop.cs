@@ -6,7 +6,8 @@ namespace RevitCodexBridge.Addin;
 internal sealed record RevitAiResponse(string Reply, string? PlanJson);
 internal sealed record AgentTurnResult(string Reply, string? PendingPlan, string DocumentToken);
 
-// All writes are returned for review. Only reads and dry-runs are dispatched here.
+// Reads and transactional dry-runs are dispatched here. Validated writes are returned
+// to the pane, which either submits them immediately or presents them for review.
 internal static class RevitAgentLoop
 {
     public static async Task<AgentTurnResult> RunAsync(
@@ -34,7 +35,7 @@ internal static class RevitAgentLoop
         var seen = new HashSet<string>(StringComparer.Ordinal);
         var failures = 0;
         var suggestedScriptFallback = false;
-        var repairedMissingActionPlan = false;
+        var missingActionRepairs = 0;
         for (var step = 1; step <= 8; step++)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -43,12 +44,13 @@ internal static class RevitAgentLoop
             cancellationToken.ThrowIfCancellationRequested();
             if (string.IsNullOrWhiteSpace(response.PlanJson))
             {
-                if (!verificationOnly && !repairedMissingActionPlan && AgentPlanPolicy.PromisesImmediateAction(response.Reply))
+                if (!verificationOnly && missingActionRepairs < 2
+                    && (string.IsNullOrWhiteSpace(response.Reply) || AgentPlanPolicy.PromisesImmediateAction(response.Reply)))
                 {
-                    repairedMissingActionPlan = true;
-                    observations.Add(new("assistant", response.Reply));
+                    missingActionRepairs++;
+                    if (!string.IsNullOrWhiteSpace(response.Reply)) observations.Add(new("assistant", response.Reply));
                     observations.Add(new("user",
-                        "协议校验：你刚才声称现在/接下来会查询、预览或执行，但返回的plan是null。宿主不会从reply文字推测或执行命令，也不存在稍后自动运行。若所需参数已在模型上下文或对话中明确，立即返回包含真实命令及全部参数的plan；若确实缺少参数，只询问缺失项，不要声称正在执行。"));
+                        "协议校验：你刚才返回了空内容，或声称现在/接下来会查询、编译、创建或执行，但plan是null。宿主不会从reply文字推测命令，也不存在稍后自动运行。若参数已在模型上下文或对话中明确，立即返回含真实命令和全部参数的plan；如需脚本，现在就返回prepare_revit_script（含mode、purpose、code）。若确实缺参数，只询问缺失项，不要声称正在执行。"));
                     continue;
                 }
                 if (!verificationOnly && !suggestedScriptFallback &&
@@ -220,6 +222,7 @@ internal static class AgentPlanPolicy
             "现在调用", "现在执行", "现在运行", "现在生成", "现在查询", "现在读取", "现在列出",
             "先调用", "先执行", "先运行", "先查询", "先读取", "先列出", "先核实",
             "接下来调用", "接下来执行", "接下来运行", "接下来查询", "接下来读取", "接下来列出",
+            "我将先生成", "将先生成", "我将先编译", "将先编译", "生成写入脚本", "脚本方式创建",
             "准备调用", "准备执行", "开始调用", "开始执行", "请稍后"
         };
         return phrases.Any(phrase => reply.Contains(phrase, StringComparison.Ordinal));

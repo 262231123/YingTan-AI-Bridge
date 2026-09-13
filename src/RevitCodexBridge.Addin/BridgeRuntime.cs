@@ -100,6 +100,8 @@ internal sealed class BridgeRuntime : IDisposable
                 {
                     Interlocked.Increment(ref _failedCount);
                     LastError = record.ErrorDetails;
+                    BridgeLog.Error($"Command returned a failure result: {command}",
+                        new InvalidOperationException(record.ErrorDetails));
                 }
                 NotifyOperationRecorded();
                 request.SetResult(result);

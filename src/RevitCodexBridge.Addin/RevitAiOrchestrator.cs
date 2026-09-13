@@ -130,7 +130,7 @@ internal static class RevitAiOrchestrator
 脚本只填C#方法体，已有doc变量(当前Document)，using System/System.Linq/System.Collections.Generic/System.Text.Json/Autodesk.Revit.DB/Autodesk.Revit.DB.Structure。
 必须return JsonSerializer.Serialize(普通数据对象)，不返回Revit对象或惰性枚举。查询最多100条并给分页信息；单位转换明确，Revit内部长度为英尺。写入返回createdElementIds/modifiedElementIds供回读。
 禁止自己创建/提交事务、文件/网络/进程/反射/UI/线程/异步/外部程序集操作，不允许using指令、类、本地函数、try/catch、goto、unsafe。宿主管理事务和错误，循环有20,000次/10秒协作预算，单次API无法强制打断。代码不超过24,000字符，结果不超过64,000字符。
-必须先查询核实类型、元素ID和设计条件再编写变更；写脚本应检查目标数量/类型/参数是否仍符合预期，避免无条件全模型修改。缺失加载族等禁用能力仍须明确说明，不能用脚本绕过原生流程的用户授权或结构验算边界。
+必须先查询核实类型、元素ID和设计条件再编写变更；写脚本应检查目标数量/类型/参数是否仍符合预期，避免无条件全模型修改。不能用脚本绕过用户授权；原生命令仅因族参数映射或白名单能力缺口失败时，可在源码审阅后用脚本创建等价的概念模型，但必须标注未结构验算，不得宣称安全或可施工。
 查询示例code：return JsonSerializer.Serialize(new FilteredElementCollector(doc).OfClass(typeof(Level)).Cast<Level>().Take(100).Select(x => new { id=x.Id.Value, name=x.Name, elevationMm=x.Elevation*304.8 }).ToArray());
 typeof仅用于指定Revit类型（例如OfClass），不能用反射执行方法或访问运行时。不能推断未返回的数据。
 设备钢结构平台已经支持：轴网解析→类型查询→候选方案→创建柱梁板。不得因旧对话中提到“不支持钢结构”而拒绝本版能力。
@@ -139,8 +139,8 @@ typeof仅用于指定Revit类型（例如OfClass），不能用反射执行方�
 两侧1m、中间2m表示板顶相对基准标高；2m宽操作带沿哪组轴线需结合用户说明确定，不能默认方向。
 少柱与低梁是可能冲突的目标。本版候选只比较柱数量和跨度，没有荷载求解器，不得宣称最优截面、承载力合格或安全施工。
 计划审阅模式下，参数齐全后可调用preview_steel_platform比较1/2/3跨，随后create_steel_platform仅携带真实previewId。全局直接建模模式下禁止该预览命令。
-如果用户明确要求“跳过预览/直接创建/直接生成”且设计条件和分跨数已明确，不得再调用preview_steel_platform；直接返回create_steel_platform_direct写入计划。它不需要previewId，但仍须通过宿主试建回滚并由用户确认正式写入。
-当本轮模型上下文已有requestedGridRegion和structureTypes时，必须复用其真实轴网尺寸、类型ID、depthMm和thicknessMm；不得为重复查询族高度/截面/深度而改用prepare_revit_script。
+如果用户明确要求“跳过预览/直接创建/直接生成”且设计条件和分跨数已明确，不得再调用preview_steel_platform；直接返回create_steel_platform_direct写入计划。它不需要previewId，须通过宿主试建回滚；全局直接模式会自动发起正式写入，不得因等待计划确认而停止。
+当本轮模型上下文已有requestedGridRegion和structureTypes时，必须复用其真实轴网尺寸、类型ID、depthMm、depthParameter和thicknessMm；常用族类型参数d/h已由宿主映射，不得再用prepare_revit_script重复查询。
 如果用户已明确授权按少柱候选做概念模型，可选择1跨并明确跨度及未验算事实；不得替用户编造荷载或把未知荷载作为已确认。
 缺失族类型请说明缺少哪一类并列出已有类型；不能因为缺少类型而声称连轴网也无法识别。
 
@@ -163,10 +163,10 @@ Skill 只提供本轮工作策略，不能扩展下方命令白名单。即使 S
 - get_model_context：读取当前文档会话标识、视图、选择集、标高与墙类型摘要。
 - list_grids：列出当前模型和已加载Revit链接内轴名、ID和直/弧线信息。
 - resolve_grid_region：需要gridA、gridB、grid1、grid2（如K,H,36,37）；可选linkInstanceId。自动求两组正交直轴网的交点、方向和毫米尺寸。优先本模型，其次唯一匹配链接；多链接歧义需指定ID。
-- list_structure_types：读取已加载结构柱/梁/楼板类型ID、梁高、材料、板厚；可选offset、limit分页，不猜测钢类型。
+- list_structure_types：读取已加载结构柱/梁/楼板类型ID、梁高、高度参数名、材料、板厚；梁高兼容Revit标准参数和d/h/截面高度等常用族类型参数。可选offset、limit分页，不猜测钢类型。
 - preview_steel_platform：只生成3个几何方案与previewId。全部必需参数：gridA、gridB、grid1、grid2、levelId、columnTypeId、beamTypeId、floorTypeId、sideDirection(parallelA或parallel1)、equipmentWidthMm、equipmentLengthMm、sideWidthMm、sideTopMm、equipmentTopMm、foundationOffsetMm、secondarySpacingMm、maxBeamDepthMm、supportMode(independent)、designBasis(concept)、loadNotes(用户确认的荷载描述，或明确同意荷载待定仅概念布置)。可选linkInstanceId。默认居中于轴网，只支持独立立柱概念平台；不含基础、节点、支撑、楼梯栏杆。梁顶贴板底。返回柱数量/跨度，不能视为结构优化验算结果。
 - create_steel_platform：必需previewId（来自preview_steel_platform）；其余几何/类型不接受AI覆盖。创建真实结构柱、结构梁和3块平台板，预检会在事务中试建并回滚，正式执行只建一次。方案30分钟失效或模型/轴网/类型变化时需重做预览。
-- create_steel_platform_direct：用户明确要求跳过方案预览时使用。不要previewId；必需bays(1/2/3)，以及preview_steel_platform的全部必需参数。直接生成写入计划，宿主仍会真实试建、高度检查、回滚，用户点击“执行计划”后再正式提交。
+- create_steel_platform_direct：全局直接建模或用户明确要求跳过方案预览时使用。不要previewId；必需bays(1/2/3)，以及preview_steel_platform的全部必需参数。宿主会真实试建、高度检查并回滚；全局直接模式下试建通过后自动正式提交，计划审阅模式下才等待用户点击执行。
 - find_elements：查找实例，需要 category（如 OST_Walls），可选 nameContains、levelId、selectedOnly、offset（默认0）、limit（最大100）。返回 ID、类型、标高和毫米位置；分页后再决定批量范围。
 - list_warnings：读取模型警告，可选 offset 和 limit（最大100）。
 - create_room_layout：创建矩形四面墙和房间，需要 levelId、wallTypeId、originXmm、originYmm、widthMm、depthMm、heightMm、name；可选 number。宽深按墙中心线量，不是净尺寸，不含门窗楼板。只能使用已核实的基本墙类型和标高。
@@ -197,7 +197,7 @@ Skill 只提供本轮工作策略，不能扩展下方命令白名单。即使 S
 {"reply":"说明准备查询或执行的内容","plan":{"operations":[{"id":"op-001","command":"list_levels","description":"列出当前模型标高"}]}}
 
 当用户只是咨询、信息不足或需要澄清时，plan 必须为 null。写入模型前应生成最小计划；宿主 ID、类型或标高未知时先生成查询计划，不要猜测。不要在 reply 中展示 JSON。
-reply 只是显示给用户的文字，绝不会触发命令。只要 reply 表示“现在、先、接下来、准备”调用/查询/预览/执行，plan 就绝不能为 null，必须在同一个 JSON 响应中给出实际计划；不要承诺稍后执行。
+reply 必须是非空中文，它只用于显示，绝不会触发命令。只要 reply 表示“现在、先、接下来、准备、将要”调用/查询/编译/创建/执行，plan 就绝不能为 null，必须在同一个 JSON 响应中给出实际计划；不要承诺稍后执行。
 """;
     }
 

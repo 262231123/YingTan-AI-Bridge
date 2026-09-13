@@ -43,11 +43,16 @@ internal static class SteelPlatformTools
         object Symbols(BuiltInCategory category)
         {
             var items = new FilteredElementCollector(doc).OfClass(typeof(FamilySymbol)).OfCategory(category).Cast<FamilySymbol>().OrderBy(x => x.Id.Value).ToList();
-            return new { total = items.Count, hasMore = offset + limit < items.Count, types = items.Skip(offset).Take(limit).Select(s => new
+            return new { total = items.Count, hasMore = offset + limit < items.Count, types = items.Skip(offset).Take(limit).Select(s =>
             {
-                id = s.Id.Value, family = s.FamilyName, name = s.Name, placement = s.Family.FamilyPlacementType.ToString(),
-                depthMm = Depth(s), material = MaterialName(doc, s), structuralMaterial = s.Family.StructuralMaterialType.ToString(),
-                note = "截面高度来自族参数，缺失为null；不代表此截面已通过承载力验算。"
+                var depth = ReadDepth(s);
+                return new
+                {
+                    id = s.Id.Value, family = s.FamilyName, name = s.Name, placement = s.Family.FamilyPlacementType.ToString(),
+                    depthMm = depth?.Millimeters, depthParameter = depth?.ParameterName,
+                    material = MaterialName(doc, s), structuralMaterial = s.Family.StructuralMaterialType.ToString(),
+                    note = "截面高度优先读取Revit标准参数，并兼容d/h/截面高度等常用族类型参数；缺失为null，不代表已通过结构验算。"
+                };
             }).ToArray() };
         }
         var floors = new FilteredElementCollector(doc).OfClass(typeof(FloorType)).Cast<FloorType>().Where(f => !f.IsFoundationSlab).OrderBy(f => f.Id.Value).ToList();
@@ -252,10 +257,38 @@ internal static class SteelPlatformTools
             throw new InvalidOperationException(key + "必须使用结构材料分类为Steel的族；不能将混凝土/木构件作为钢平台。");
         return s;
     }
-    private static double? Depth(FamilySymbol symbol)
+    private sealed record DepthValue(double Millimeters, string ParameterName);
+
+    private static DepthValue? ReadDepth(FamilySymbol symbol)
     {
         var p = symbol.get_Parameter(BuiltInParameter.STRUCTURAL_SECTION_COMMON_HEIGHT);
-        return p?.StorageType == StorageType.Double && p.AsDouble() > 0 ? p.AsDouble() * 304.8 : null;
+        if (TryReadLength(p, out var standardDepth))
+            return new(standardDepth, "STRUCTURAL_SECTION_COMMON_HEIGHT");
+
+        // Many metric structural families (including Autodesk HE profiles) expose the
+        // section depth as a type parameter named "d" without binding the common
+        // built-in height parameter. Match exact names only so unrelated dimensions
+        // cannot accidentally be treated as the member depth.
+        var aliases = new[] { "d", "h", "截面高度", "梁高", "高度", "Section Height", "Height", "Depth" };
+        foreach (var alias in aliases)
+        {
+            var candidate = symbol.Parameters.Cast<Parameter>().FirstOrDefault(parameter =>
+                string.Equals(parameter.Definition?.Name?.Trim(), alias, StringComparison.OrdinalIgnoreCase));
+            if (TryReadLength(candidate, out var namedDepth)) return new(namedDepth, candidate!.Definition.Name);
+        }
+        return null;
+    }
+
+    private static double? Depth(FamilySymbol symbol) => ReadDepth(symbol)?.Millimeters;
+
+    private static bool TryReadLength(Parameter? parameter, out double millimeters)
+    {
+        millimeters = 0;
+        if (parameter?.StorageType != StorageType.Double) return false;
+        var feet = parameter.AsDouble();
+        if (!double.IsFinite(feet) || feet <= 0) return false;
+        millimeters = feet * 304.8;
+        return double.IsFinite(millimeters) && millimeters > 0;
     }
     private static string? MaterialName(Document doc, FamilySymbol symbol)
     {

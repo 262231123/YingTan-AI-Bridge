@@ -86,6 +86,31 @@ turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
 }, _ => { }, CancellationToken.None, autoExecuteWrites: true);
 Check(call == 2 && executions == 1 && turn.PendingPlan is not null && turn.Reply.Contains("立即正式写入"),
     "global direct mode skips scheme preview and returns the mutation for immediate commit");
+call = 0;
+executions = 0;
+turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
+{
+    call++;
+    if (call == 1) return Task.FromResult(new RevitAiResponse("按你选择的方案用脚本方式创建，我将先生成写入脚本并编译。", null));
+    Check(messages.Any(message => message.Content.Contains("prepare_revit_script")), "promised script creation receives executable-plan repair");
+    if (call == 2) return Task.FromResult(new RevitAiResponse("编译写入脚本", "{\"command\":\"prepare_revit_script\",\"mode\":\"write\",\"purpose\":\"创建概念模型\",\"code\":\"return JsonSerializer.Serialize(new { createdElementIds = Array.Empty<long>() });\"}"));
+    return Task.FromResult(new RevitAiResponse("试运行写入脚本", "{\"command\":\"execute_revit_script\",\"scriptId\":\"script-1\"}"));
+}, (_, _) =>
+{
+    executions++;
+    return Task.FromResult<object?>(executions == 1 ? new { compiled = true, scriptId = "script-1" } : new { dryRun = true, trialPassed = true });
+}, _ => { }, CancellationToken.None, autoExecuteWrites: true);
+Check(call == 3 && executions == 2 && turn.PendingPlan is not null,
+    "script promise is repaired and advances through compilation to an executable write plan");
+call = 0;
+turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
+{
+    call++;
+    return Task.FromResult(call == 1
+        ? new RevitAiResponse(string.Empty, null)
+        : new RevitAiResponse("仍缺少必要的目标范围，请先选择构件。", null));
+}, (_, _) => Task.FromResult<object?>(null), _ => { }, CancellationToken.None, autoExecuteWrites: true);
+Check(call == 2 && turn.Reply.Contains("请先选择"), "empty assistant response is retried and cannot become an empty chat message");
 var platformContext = JsonSerializer.SerializeToElement(new
 {
     documentToken = "doc-A",
