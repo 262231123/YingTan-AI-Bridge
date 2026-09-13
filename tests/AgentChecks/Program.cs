@@ -52,6 +52,25 @@ Check(executions == 0 && turn.PendingPlan is null, "verification cannot dispatch
 turn = await RevitAgentLoop.RunAsync(context, (_, _) => Task.FromResult(new RevitAiResponse("", read)),
     (_, _) => Task.FromResult<object?>(new { failures = 0 }), _ => { }, CancellationToken.None);
 Check(turn.PendingPlan is null && turn.Reply.Contains("重复"), "duplicate query loop stops");
+call = 0;
+executions = 0;
+turn = await RevitAgentLoop.RunAsync(context, (messages, ct) =>
+{
+    call++;
+    if (call == 1) return Task.FromResult(new RevitAiResponse("现在调用钢平台预览。", null));
+    if (call == 2)
+    {
+        Check(messages.Any(message => message.Content.Contains("宿主不会从reply文字")), "missing action plan receives protocol repair feedback");
+        return Task.FromResult(new RevitAiResponse("执行真实预览", "{\"operations\":[{\"command\":\"preview_steel_platform\"}]}"));
+    }
+    return Task.FromResult(new RevitAiResponse("预览已返回，可按2跨创建。", write));
+}, (_, _) =>
+{
+    executions++;
+    return Task.FromResult<object?>(new { schemes = new[] { new { previewId = "real-preview", bays = 2 } } });
+}, _ => { }, CancellationToken.None);
+Check(call == 3 && executions == 2 && turn.PendingPlan is not null, "spoken preview promise is repaired and real query continues to a write plan");
+Check(AgentPlanPolicy.PromisesImmediateAction("先执行预览并生成真实ID") && !AgentPlanPolicy.PromisesImmediateAction("如果需要可以提供建模建议"), "immediate action promise detection is narrow");
 Rejected("{\"operations\":[{\"command\":\"run_batch\"}]}", "nested batch rejected");
 Rejected("{\"operations\":[{\"command\":\"set_parameter\",\"payload\":{}}]}", "ambiguous payload wrapper rejected");
 Rejected("{\"command\":\"delete_everything\"}", "unknown command rejected");

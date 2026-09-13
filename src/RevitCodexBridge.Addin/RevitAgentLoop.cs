@@ -28,6 +28,7 @@ internal static class RevitAgentLoop
         var seen = new HashSet<string>(StringComparer.Ordinal);
         var failures = 0;
         var suggestedScriptFallback = false;
+        var repairedMissingActionPlan = false;
         for (var step = 1; step <= 8; step++)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -36,6 +37,14 @@ internal static class RevitAgentLoop
             cancellationToken.ThrowIfCancellationRequested();
             if (string.IsNullOrWhiteSpace(response.PlanJson))
             {
+                if (!verificationOnly && !repairedMissingActionPlan && AgentPlanPolicy.PromisesImmediateAction(response.Reply))
+                {
+                    repairedMissingActionPlan = true;
+                    observations.Add(new("assistant", response.Reply));
+                    observations.Add(new("user",
+                        "协议校验：你刚才声称现在/接下来会查询、预览或执行，但返回的plan是null。宿主不会从reply文字推测或执行命令，也不存在稍后自动运行。若所需参数已在模型上下文或对话中明确，立即返回包含真实命令及全部参数的plan；若确实缺少参数，只询问缺失项，不要声称正在执行。"));
+                    continue;
+                }
                 if (!verificationOnly && !suggestedScriptFallback &&
                     (response.Reply.Contains("没有对应命令", StringComparison.Ordinal) || response.Reply.Contains("不支持该操作", StringComparison.Ordinal)
                     || response.Reply.Contains("没有建模功能", StringComparison.Ordinal) || response.Reply.Contains("无法直接", StringComparison.Ordinal)))
@@ -129,6 +138,19 @@ internal static class AgentPlanPolicy
         if (result is null) return "宿主返回空结果。";
         var node = JsonSerializer.SerializeToElement(result);
         return Inspect(node) ? BoundedResult(result) : null;
+    }
+
+    public static bool PromisesImmediateAction(string reply)
+    {
+        if (string.IsNullOrWhiteSpace(reply)) return false;
+        var phrases = new[]
+        {
+            "现在调用", "现在执行", "现在运行", "现在生成", "现在查询", "现在读取", "现在列出",
+            "先调用", "先执行", "先运行", "先查询", "先读取", "先列出", "先核实",
+            "接下来调用", "接下来执行", "接下来运行", "接下来查询", "接下来读取", "接下来列出",
+            "准备调用", "准备执行", "开始调用", "开始执行", "请稍后"
+        };
+        return phrases.Any(phrase => reply.Contains(phrase, StringComparison.Ordinal));
     }
 
     private static bool Inspect(JsonElement node)
