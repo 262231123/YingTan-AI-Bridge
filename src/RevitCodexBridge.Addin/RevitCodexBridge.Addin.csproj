@@ -37,6 +37,11 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Assets\YingTanAiBridge.png" />
+    <EmbeddedResource Include="Assets\YingTanAiBridge.png" LogicalName="RevitCodexBridge.Addin.Assets.YingTanAiBridge.png" />
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <Reference Include="System.Net.Http" />

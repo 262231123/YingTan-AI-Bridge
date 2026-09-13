@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
@@ -85,11 +87,12 @@ public sealed class BridgeApplication : IExternalApplication
         try
         {
             var assemblyPath = Assembly.GetExecutingAssembly().Location;
-            var panel = application.CreateRibbonPanel("盈碳 AI");
+            // The one-argument overload creates this panel on Revit's built-in Add-Ins tab.
+            var panel = application.CreateRibbonPanel("盈碳 AI 助手");
 
             var assistant = new PushButtonData(
                 "RevitCodexBridge.Status",
-                "盈碳 AI\nBridge",
+                "AI\n助手",
                 assemblyPath,
                 typeof(BridgeCommand).FullName)
             {
@@ -97,6 +100,8 @@ public sealed class BridgeApplication : IExternalApplication
                 LongDescription = "用于配置模型 API、Agent、Skill，并在确认后执行受控 Revit 操作。",
                 AvailabilityClassName = typeof(BridgeCommandAvailability).FullName
             };
+            assistant.Image = LoadRibbonIcon(16);
+            assistant.LargeImage = LoadRibbonIcon(32);
 
             var help = new PushButtonData(
                 "RevitCodexBridge.Help",
@@ -119,14 +124,28 @@ public sealed class BridgeApplication : IExternalApplication
             };
 
             panel.AddItem(assistant);
-            panel.AddItem(help);
-            panel.AddItem(about);
-            BridgeLog.Info("YingTan Revit AI ribbon buttons created.");
+            panel.AddStackedItems(help, about);
+            BridgeLog.Info("YingTan Revit AI standalone icon created on the built-in Add-Ins tab.");
         }
         catch (Exception ex)
         {
             BridgeLog.Error("Failed to create YingTan ribbon buttons.", ex);
         }
+    }
+
+    private static ImageSource LoadRibbonIcon(int pixelWidth)
+    {
+        var assembly = typeof(BridgeApplication).Assembly;
+        using var stream = assembly.GetManifestResourceStream("RevitCodexBridge.Addin.Assets.YingTanAiBridge.png")
+            ?? throw new InvalidOperationException("Embedded Revit ribbon icon was not found.");
+        var bitmap = new BitmapImage();
+        bitmap.BeginInit();
+        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+        bitmap.DecodePixelWidth = pixelWidth;
+        bitmap.StreamSource = stream;
+        bitmap.EndInit();
+        bitmap.Freeze();
+        return bitmap;
     }
 }
 

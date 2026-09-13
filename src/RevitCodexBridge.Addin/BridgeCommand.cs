@@ -13,9 +13,11 @@ public sealed class BridgeCommand : IExternalCommand
 
         try
         {
+            if (ChatDockPane.Current is null)
+                throw new InvalidOperationException("AI 对话面板未完成初始化。请重新启动 Revit，并查看 bridge.log 中的启动错误。");
             var pane = commandData.Application.GetDockablePane(ChatDockPane.PaneId);
             pane.Show();
-            ChatDockPane.Current?.FocusComposer();
+            ChatDockPane.Current.FocusComposer();
             return Result.Succeeded;
         }
         catch (Exception ex)
