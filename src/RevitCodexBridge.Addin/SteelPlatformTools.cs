@@ -11,6 +11,8 @@ internal static class SteelPlatformTools
     private sealed record GridSource(Document Document, Transform Transform, long? LinkInstanceId);
     private sealed record Region(GridFrame Frame, long? LinkInstanceId, long[] GridIds, string[] Names);
     private sealed record Preview(string DocumentToken, JsonElement Parameters, PlatformScheme Scheme, string Signature, DateTime Created);
+    private sealed record ValidatedInputs(Region Region, GridFrame Frame, Level Level, FamilySymbol Column, FamilySymbol Beam,
+        FloorType Floor, double Thickness, double BeamDepth, double Low, double High, double Foundation, string Direction, string LoadNotes);
     private static readonly Dictionary<string, Preview> Previews = new(); // Accessed only in Revit ExternalEvent.
 
     public static object ListGrids(Document doc)
@@ -57,44 +59,23 @@ internal static class SteelPlatformTools
 
     public static object PreviewPlatform(Document doc, JsonElement p)
     {
-        if (doc.IsFamilyDocument || doc.IsReadOnly) throw new InvalidOperationException("需要可写项目文档。");
-        if (p.GetRequiredString("supportMode") != "independent") throw new InvalidOperationException("当前自动建模支持独立立柱平台；依附既有结构需要另行设计连接节点。");
-        var basis = p.GetRequiredString("designBasis");
-        if (basis != "concept") throw new InvalidOperationException("仅支持concept方案模型，未实现承载力优化求解。");
-        var loadNotes = p.GetRequiredString("loadNotes");
-        if (string.IsNullOrWhiteSpace(loadNotes)) throw new InvalidOperationException("请记录设备/操作荷载，或用户明确同意的‘荷载待定，仅概念布置’。");
-        var region = Resolve(doc, p);
-        var direction = p.GetRequiredString("sideDirection");
-        if (direction is not "parallelA" and not "parallel1") throw new InvalidOperationException("sideDirection须为parallelA（沿A/B轴）或parallel1（沿1/2轴）。");
-        var frame = direction == "parallelA" ? region.Frame : region.Frame.Swap();
-        var level = doc.GetElement(new ElementId(p.GetRequiredInt64("levelId"))) as Level ?? throw new InvalidOperationException("基准标高不存在。");
-        var column = Symbol(doc, p, "columnTypeId", BuiltInCategory.OST_StructuralColumns);
-        var beam = Symbol(doc, p, "beamTypeId", BuiltInCategory.OST_StructuralFraming);
-        var floor = doc.GetElement(new ElementId(p.GetRequiredInt64("floorTypeId"))) as FloorType ?? throw new InvalidOperationException("平台板类型不存在。");
-        if (floor.IsFoundationSlab) throw new InvalidOperationException("请选择普通平台楼板类型，不能使用基础板类型。");
-        var thickness = floor.GetCompoundStructure()?.GetWidth() * 304.8 ?? 0;
-        var beamDepth = Depth(beam) ?? throw new InvalidOperationException("该梁类型缺少可读取的截面高度，无法核实梁底净高；请选择有截面高度参数的梁族。");
-        var heightLimit = p.GetRequiredDouble("maxBeamDepthMm");
-        if (!double.IsFinite(heightLimit) || heightLimit <= 0 || beamDepth > heightLimit) throw new InvalidOperationException("所选梁高度超过已确认的梁高上限。");
-        var low = p.GetRequiredDouble("sideTopMm"); var high = p.GetRequiredDouble("equipmentTopMm");
-        var foundation = p.GetRequiredDouble("foundationOffsetMm");
-        if (beamDepth + thickness >= low - foundation) throw new InvalidOperationException("低平台梁底已低于柱底，所选截面/平台高度不适用。");
+        var input = ValidateInputs(doc, p);
         var schemes = new List<object>();
         foreach (var expired in Previews.Where(x => DateTime.UtcNow - x.Value.Created > TimeSpan.FromMinutes(30)).Select(x => x.Key).ToArray()) Previews.Remove(expired);
         foreach (var bays in new[] { 1, 2, 3 })
         {
-            var scheme = PlatformLayout.Build(frame, p.GetRequiredDouble("equipmentWidthMm"), p.GetRequiredDouble("equipmentLengthMm"),
-                p.GetRequiredDouble("sideWidthMm"), low, high, thickness, foundation, bays, p.GetRequiredDouble("secondarySpacingMm"));
+            var scheme = BuildScheme(input, p, bays);
             var previewId = Guid.NewGuid().ToString("N");
-            Previews[previewId] = new(DesignAgentTools.Token(doc), p.Clone(), scheme, Signature(region, level, column, beam, floor), DateTime.UtcNow);
+            Previews[previewId] = new(DesignAgentTools.Token(doc), p.Clone(), scheme,
+                Signature(input.Region, input.Level, input.Column, input.Beam, input.Floor), DateTime.UtcNow);
             schemes.Add(new { previewId, scheme.Bays, scheme.ColumnCount, beamCount = scheme.Members.Count(m => m.Kind == "beam"), deckCount = 3,
-                scheme.LongitudinalSpanMm, scheme.MaxBeamSpanMm, beamDepthMm = beamDepth, operatingClearBelowBeamMm = low - thickness - beamDepth,
-                sideTopMm = low, equipmentTopMm = high, widthMm = scheme.WidthMm, lengthMm = scheme.LengthMm,
+                scheme.LongitudinalSpanMm, scheme.MaxBeamSpanMm, beamDepthMm = input.BeamDepth, operatingClearBelowBeamMm = input.Low - input.Thickness - input.BeamDepth,
+                sideTopMm = input.Low, equipmentTopMm = input.High, widthMm = scheme.WidthMm, lengthMm = scheme.LengthMm,
                 note = "几何分跨比较，不是承载力或最小梁高结论；增加纵向柱不一定减小中间设备带的横向梁跨度。" });
         }
         while (Previews.Count > 30) Previews.Remove(Previews.OrderBy(x => x.Value.Created).First().Key);
-        return new { schemes, level = level.Name, loadNotes, sideDirection = direction, columnType = column.Name, beamType = beam.Name, floorType = floor.Name,
-            nearby = Nearby(doc, frame, level.Elevation + foundation / 304.8, level.Elevation + high / 304.8),
+        return new { schemes, level = input.Level.Name, loadNotes = input.LoadNotes, sideDirection = input.Direction, columnType = input.Column.Name, beamType = input.Beam.Name, floorType = input.Floor.Name,
+            nearby = Nearby(doc, input.Frame, input.Level.Elevation + input.Foundation / 304.8, input.Level.Elevation + input.High / 304.8),
             note = "平台居中于所选轴网；两侧板顶和中间板顶按基准标高偏移。独立立柱+梁+三块板；不含基础、节点、支撑、楼梯、栏杆。荷载仅记录，未做强度/挠度/稳定验算；确认几何方案后使用previewId建模。" };
     }
 
@@ -103,6 +84,23 @@ internal static class SteelPlatformTools
         var id = p.GetRequiredString("previewId");
         if (!Previews.TryGetValue(id, out var preview) || preview.DocumentToken != DesignAgentTools.Token(doc)
             || DateTime.UtcNow - preview.Created > TimeSpan.FromMinutes(30)) throw new InvalidOperationException("方案已失效或属于其他文档，请重新preview_steel_platform。");
+        return CreatePrepared(doc, p, preview, id, true);
+    }
+
+    public static object CreateDirect(Document doc, JsonElement p)
+    {
+        var rawBays = p.GetRequiredDouble("bays");
+        if (!double.IsFinite(rawBays) || rawBays != Math.Truncate(rawBays) || rawBays is < 1 or > 3)
+            throw new InvalidOperationException("bays必须是1、2或3。");
+        var bays = (int)rawBays;
+        var input = ValidateInputs(doc, p);
+        var preview = new Preview(DesignAgentTools.Token(doc), p.Clone(), BuildScheme(input, p, bays),
+            Signature(input.Region, input.Level, input.Column, input.Beam, input.Floor), DateTime.UtcNow);
+        return CreatePrepared(doc, p, preview, "direct-" + Guid.NewGuid().ToString("N"), false);
+    }
+
+    private static object CreatePrepared(Document doc, JsonElement p, Preview preview, string id, bool consumePreview)
+    {
         var inputs = preview.Parameters;
         var region = Resolve(doc, inputs);
         var level = doc.GetElement(new ElementId(inputs.GetRequiredInt64("levelId"))) as Level ?? throw new InvalidOperationException("标高已失效。");
@@ -170,13 +168,48 @@ internal static class SteelPlatformTools
         if (dryRun)
         {
             if (tx.RollBack() != TransactionStatus.RolledBack) throw new InvalidOperationException("试建事务未正确回滚。");
-            return new { dryRun = true, geometryValidated = true, previewId = id, preview.Scheme.ColumnCount, members = preview.Scheme.Members.Count, floorCount = 3, note = "真实族试建与顶高检查通过，已回滚试建构件。" };
+            return new { dryRun = true, geometryValidated = true, direct = !consumePreview, previewId = consumePreview ? id : null,
+                preview.Scheme.Bays, preview.Scheme.ColumnCount, members = preview.Scheme.Members.Count, floorCount = 3,
+                note = "真实族试建与顶高检查通过，已回滚试建构件。" };
         }
         if (tx.Commit() != TransactionStatus.Committed) throw new InvalidOperationException("平台事务未提交。");
-        Previews.Remove(id);
-        return new { committed = true, previewId = id, preview.Scheme.ColumnCount, createdElementIds = created,
+        if (consumePreview) Previews.Remove(id);
+        return new { committed = true, direct = !consumePreview, previewId = consumePreview ? id : null,
+            preview.Scheme.Bays, preview.Scheme.ColumnCount, createdElementIds = created,
             note = "已创建概念结构构件；未进行结构验算，未建基础/支撑/连接节点/楼梯栏杆。" };
     }
+
+    private static ValidatedInputs ValidateInputs(Document doc, JsonElement p)
+    {
+        if (doc.IsFamilyDocument || doc.IsReadOnly) throw new InvalidOperationException("需要可写项目文档。");
+        if (p.GetRequiredString("supportMode") != "independent") throw new InvalidOperationException("当前自动建模支持独立立柱平台；依附既有结构需要另行设计连接节点。");
+        if (p.GetRequiredString("designBasis") != "concept") throw new InvalidOperationException("仅支持concept方案模型，未实现承载力优化求解。");
+        var loadNotes = p.GetRequiredString("loadNotes");
+        if (string.IsNullOrWhiteSpace(loadNotes)) throw new InvalidOperationException("请记录设备/操作荷载，或用户明确同意的‘荷载待定，仅概念布置’。");
+        var region = Resolve(doc, p);
+        var direction = p.GetRequiredString("sideDirection");
+        if (direction is not "parallelA" and not "parallel1") throw new InvalidOperationException("sideDirection须为parallelA（沿A/B轴）或parallel1（沿1/2轴）。");
+        var frame = direction == "parallelA" ? region.Frame : region.Frame.Swap();
+        var level = doc.GetElement(new ElementId(p.GetRequiredInt64("levelId"))) as Level ?? throw new InvalidOperationException("基准标高不存在。");
+        var column = Symbol(doc, p, "columnTypeId", BuiltInCategory.OST_StructuralColumns);
+        var beam = Symbol(doc, p, "beamTypeId", BuiltInCategory.OST_StructuralFraming);
+        var floor = doc.GetElement(new ElementId(p.GetRequiredInt64("floorTypeId"))) as FloorType ?? throw new InvalidOperationException("平台板类型不存在。");
+        if (floor.IsFoundationSlab) throw new InvalidOperationException("请选择普通平台楼板类型，不能使用基础板类型。");
+        var thickness = floor.GetCompoundStructure()?.GetWidth() * 304.8 ?? 0;
+        var beamDepth = Depth(beam) ?? throw new InvalidOperationException("该梁类型缺少可读取的截面高度，无法核实梁底净高；请选择有截面高度参数的梁族。");
+        var heightLimit = p.GetRequiredDouble("maxBeamDepthMm");
+        if (!double.IsFinite(heightLimit) || heightLimit <= 0 || beamDepth > heightLimit) throw new InvalidOperationException("所选梁高度超过已确认的梁高上限。");
+        var low = p.GetRequiredDouble("sideTopMm");
+        var high = p.GetRequiredDouble("equipmentTopMm");
+        var foundation = p.GetRequiredDouble("foundationOffsetMm");
+        if (beamDepth + thickness >= low - foundation) throw new InvalidOperationException("低平台梁底已低于柱底，所选截面/平台高度不适用。");
+        return new(region, frame, level, column, beam, floor, thickness, beamDepth, low, high, foundation, direction, loadNotes);
+    }
+
+    private static PlatformScheme BuildScheme(ValidatedInputs input, JsonElement p, int bays) =>
+        PlatformLayout.Build(input.Frame, p.GetRequiredDouble("equipmentWidthMm"), p.GetRequiredDouble("equipmentLengthMm"),
+            p.GetRequiredDouble("sideWidthMm"), input.Low, input.High, input.Thickness, input.Foundation, bays,
+            p.GetRequiredDouble("secondarySpacingMm"));
 
     private static IEnumerable<GridSource> Sources(Document host)
     {

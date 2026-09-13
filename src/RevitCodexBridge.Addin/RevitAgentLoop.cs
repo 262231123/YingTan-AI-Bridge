@@ -27,7 +27,7 @@ internal static class RevitAgentLoop
             && context.TryGetProperty("structureTypes", out _))
             observations.Add(new("user",
                 "宿主已在本轮读取requestedGridRegion和structureTypes，其中结构梁类型已包含depthMm。"
-                + "不要再用prepare_revit_script重复查询族截面/高度/深度；设计参数已齐全时直接返回preview_steel_platform的完整plan。"));
+                + "不要再用prepare_revit_script重复查询族截面/高度/深度；设计参数已齐全时按用户意图返回preview_steel_platform或create_steel_platform_direct的完整plan。"));
         if (verificationOnly)
             observations.Add(new("user", "当前是已执行操作的核验阶段。只查询并报告已完成、未完成、待核实内容，不得生成新的写入。"));
         var seen = new HashSet<string>(StringComparer.Ordinal);
@@ -100,7 +100,7 @@ internal static class AgentPlanPolicy
     {
         "get_active_document", "get_model_context", "find_elements", "list_warnings",
         "prepare_revit_script", "query_revit_script", "execute_revit_script",
-        "list_grids", "resolve_grid_region", "list_structure_types", "preview_steel_platform", "create_steel_platform",
+        "list_grids", "resolve_grid_region", "list_structure_types", "preview_steel_platform", "create_steel_platform", "create_steel_platform_direct",
         "list_levels", "list_wall_types", "list_family_symbols", "count_elements", "analyze_walls",
         "get_selection", "get_element", "list_views", "list_sheets", "list_schedules", "show_elements",
         "finish_toolkit_info", "set_parameter", "create_wall", "place_door", "place_window",
@@ -265,7 +265,8 @@ internal static class AgentPlanPolicy
     private static string Label(string name) => name switch
     {
         "create_room_layout" => "创建矩形房间（四面墙 + 房间）", "set_parameter" => "修改构件参数",
-        "create_steel_platform" => "创建设备钢结构平台（已预览方案）", "previewId" => "平台方案编号",
+        "create_steel_platform" => "创建设备钢结构平台（已预览方案）", "create_steel_platform_direct" => "直接创建设备钢结构平台",
+        "previewId" => "平台方案编号", "bays" => "纵向分跨数",
         "execute_revit_script" => "执行已编译且试运行通过的C#脚本（仍须源码确认）", "scriptId" => "脚本编号",
         "create_wall" => "创建墙", "create_room" => "创建房间", "place_door" => "放置门", "place_window" => "放置窗",
         "create_drawing_set" => "生成图纸集", "create_energy_cube_model" => "创建示例模型",

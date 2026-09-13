@@ -2,6 +2,8 @@
 
 新版聊天设计与操作流程、示例提示词和实测范围见[对话式设计 Agent](conversational-design.md)。
 
+0.7.6 起，可在对话中明确要求“跳过预览，按2跨直接创建”。AI 会生成 `create_steel_platform_direct` 写入计划，不依赖 `previewId`；正式写入前仍会执行可回滚的真实族试建。
+
 0.7.5 起，明确的只读 Revit 查询脚本即使 AI 遗漏 `mode`，宿主也会安全补全为 `query`；设备钢平台在轴网和结构类型已读取时会直接进入预览，不再重复查询截面深度。
 
 0.7.4 起，从 Revit 内置 `Add-Ins` 选项卡进入“盈碳 AI 助手”面板，点击带 BIM+AI 独立图标的“AI 助手”大按钮即可显示停靠式对话面板。相同命令仍会出现在 `Add-Ins → External Tools` 中，作为备用入口。

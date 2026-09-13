@@ -140,6 +140,7 @@ internal sealed class BridgeServer : IDisposable
                             "list_structure_types",
                             "preview_steel_platform",
                             "create_steel_platform",
+                            "create_steel_platform_direct",
                             "prepare_revit_script",
                             "query_revit_script",
                             "execute_revit_script",

@@ -42,6 +42,7 @@ internal static class CommandExecutor
 			"list_structure_types" => SteelPlatformTools.Types(GetDocument(app), payload),
 			"preview_steel_platform" => SteelPlatformTools.PreviewPlatform(GetDocument(app), payload),
 			"create_steel_platform" => SteelPlatformTools.Create(GetDocument(app), payload),
+			"create_steel_platform_direct" => SteelPlatformTools.CreateDirect(GetDocument(app), payload),
 			"find_elements" => DesignAgentTools.Find(app, payload),
 			"list_warnings" => DesignAgentTools.Warnings(GetDocument(app), payload),
 			"create_room_layout" => DesignAgentTools.RoomLayout(GetDocument(app), payload),
@@ -979,6 +980,7 @@ internal static class CommandExecutor
 		case "list_structure_types":
 		case "preview_steel_platform":
 		case "create_steel_platform":
+		case "create_steel_platform_direct":
 		case "get_model_context":
 		case "find_elements":
 		case "list_warnings":
@@ -1017,6 +1019,7 @@ internal static class CommandExecutor
 		{
 		case "execute_revit_script":
 		case "create_steel_platform":
+		case "create_steel_platform_direct":
 		case "create_room_layout":
 		case "finish_toolkit_run":
 		case "set_parameter":

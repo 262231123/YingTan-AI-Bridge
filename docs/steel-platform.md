@@ -37,6 +37,7 @@
 | `list_structure_types` | 分页读取真实柱、梁、板类型及梁高 |
 | `preview_steel_platform` | 校验输入、生成三个概念方案及有效预览ID |
 | `create_steel_platform` | 仅从有效预览创建；dry-run为真实试建后回滚 |
+| `create_steel_platform_direct` | 用户明确跳过方案预览时，按指定 `bays` 和完整设计参数直接试建/创建，不需 `previewId` |
 
 “轴网定位与设备钢平台”内置 Skill 会随默认技能合并加入，保留用户已有技能设置。
 

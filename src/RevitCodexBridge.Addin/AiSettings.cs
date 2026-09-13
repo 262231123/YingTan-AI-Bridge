@@ -182,6 +182,21 @@ internal sealed class AiSettings
             SettingsVersion = 8;
         }
 
+        if (SettingsVersion < 9)
+        {
+            // V9 adds an explicit direct-create route for users who opt out of
+            // comparing preview schemes while retaining transactional dry-run.
+            var updated = AgentSkill.CreateDefaults().First(skill => skill.Name == "轴网定位与设备钢平台");
+            var current = Skills.FirstOrDefault(skill => skill.Name == updated.Name && skill.Source == "内置");
+            if (current is not null)
+            {
+                current.Version = updated.Version;
+                current.Instructions = updated.Instructions;
+                current.RecommendedCommands = [.. updated.RecommendedCommands];
+            }
+            SettingsVersion = 9;
+        }
+
         foreach (var skill in Skills)
         {
             skill.Normalize();
@@ -361,11 +376,11 @@ internal sealed class AgentSkill
             new AgentSkill
             {
                 Name = "轴网定位与设备钢平台",
-                Category = "钢结构", Source = "内置", TrustLevel = "官方内置", Version = "0.7.5",
+                Category = "钢结构", Source = "内置", TrustLevel = "官方内置", Version = "0.7.6",
                 Description = "读取本模型/链接轴网，比较分跨，试建并创建独立柱梁板设备平台。",
-                Instructions = "识别轴网后先resolve_grid_region和list_structure_types。轴距、交点、已有类型不能反问用户抄录。structureTypes已含梁depthMm和板thicknessMm，不得再用脚本重复查询截面。只询问模型无法提供的设备宽长、两侧方向、基准标高、荷载、支承、梁高上限、次梁间距。参数完整后立即返回preview_steel_platform的完整plan比较柱数/跨度，确认概念方案再create_steel_platform；不能声称少柱方案同时具有最小梁高或通过结构验算。",
-                TriggerKeywords = ["钢结构", "设备平台", "操作平台", "轴网", "立柱", "梁高", "轴区域", "轴/"],
-                RecommendedCommands = ["list_grids", "resolve_grid_region", "list_structure_types", "preview_steel_platform", "create_steel_platform"]
+                Instructions = "识别轴网后先resolve_grid_region和list_structure_types。轴距、交点、已有类型不能反问用户抄录。structureTypes已含梁depthMm和板thicknessMm，不得再用脚本重复查询截面。只询问模型无法提供的设备宽长、两侧方向、基准标高、荷载、支承、梁高上限、次梁间距。默认可用preview_steel_platform比较柱数/跨度；用户明确跳过预览且bays已确定时，立即返回create_steel_platform_direct完整写入计划。不能声称少柱方案同时具有最小梁高或通过结构验算。",
+                TriggerKeywords = ["钢结构", "设备平台", "操作平台", "轴网", "立柱", "梁高", "轴区域", "轴/", "跳过预览", "直接创建"],
+                RecommendedCommands = ["list_grids", "resolve_grid_region", "list_structure_types", "preview_steel_platform", "create_steel_platform", "create_steel_platform_direct"]
             },
             new AgentSkill
             {

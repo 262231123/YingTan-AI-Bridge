@@ -79,7 +79,7 @@ var platformContext = JsonSerializer.SerializeToElement(new
 });
 turn = await RevitAgentLoop.RunAsync(platformContext, (messages, ct) =>
 {
-    Check(messages.Any(message => message.Content.Contains("不要再用prepare_revit_script重复查询")), "resolved platform facts explicitly route to native preview");
+    Check(messages.Any(message => message.Content.Contains("不要再用prepare_revit_script重复查询")), "resolved platform facts explicitly route to native platform commands");
     return Task.FromResult(new RevitAiResponse("请补充设备尺寸", null));
 }, (_, _) => throw new Exception("No query should run"), _ => { }, CancellationToken.None);
 var repairedQueryScript = AgentPlanPolicy.Normalize("""
@@ -149,6 +149,10 @@ var platformPlan = AgentPlanPolicy.Normalize("{\"command\":\"create_steel_platfo
 Check(BridgePayloadBuilder.HasMutation(platformPlan), "steel platform remains an explicit mutation plan");
 var dryPlatform = BridgePayloadBuilder.Build(platformPlan, false);
 Check(dryPlatform.GetProperty("operations")[0].GetProperty("dryRun").GetBoolean(), "steel platform dry-run propagated to host command");
+var directPlatformPlan = AgentPlanPolicy.Normalize("{\"command\":\"create_steel_platform_direct\",\"bays\":2}", "doc-A");
+Check(BridgePayloadBuilder.HasMutation(directPlatformPlan), "direct steel platform remains an explicit mutation plan");
+var dryDirectPlatform = BridgePayloadBuilder.Build(directPlatformPlan, false);
+Check(dryDirectPlatform.GetProperty("operations")[0].GetProperty("dryRun").GetBoolean(), "direct steel platform still receives transactional dry-run");
 Rejected("{\"operations\":[{\"command\":\"query_revit_script\",\"scriptId\":\"draft\"},{\"command\":\"set_parameter\"}]}", "script operations cannot be mixed into a write batch");
 ScriptChecks.Run(Check);
 var sessionTokens = new DocumentSessionTokens();
